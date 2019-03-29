@@ -671,23 +671,29 @@ nobody { color: #272822; background-color: #fafafa; }
                       <i class="icon-alert-circle"></i>
                       <h4 class="fs-22">Important Note</h4>
                       <p>When 
-                          <a href="/doc/files/dom-events">DOM Events</a> 
+                          <a href="/doc/dom-events">DOM Events</a> 
                           are handled, a (write) lock is acquired against the environment automatically
                         and then released when your event handler returns.  When things that would block (like fetching 
-                        data from the server over HTTP) need to be done, this must be run in a goroutine which uses 
+                        data from the server over HTTP) need to be done, this must be run in a goroutine which uses
                         <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#DOMEvent.EventEnv">event.EventEnv()</a> 
-                        to acquire their own lock to ensure they don&#39;t interfere with the render loop or other code.
+                        to acquire their own lock before modifying any component data, to ensure they don&#39;t interfere with the render loop or other code.
+                        Locking should only be done during data modification and then unlocked immediately afterward.  <strong>Do not put a
+                          <code>Lock()</code> before <code>http.Get()</code> or other such 
+                          <a target="_blank" href="https://en.wikipedia.org/wiki/Blocking_(computing)">blocking</a> calls.</strong>  Instead <code>Lock()</code> after 
+                          you have your data and before updating
+                        the state of your component.
                         <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#EventEnv">EventEnv.UnlockRender()</a>
                         will cause the <code>env.EventWait()</code> call above to return and update the page.
                         (Whereas <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#EventEnv">EventEnv.UnlockOnly()</a>
                         will release the lock but not cause the page update. This is useful if 
                         you need to do several updates to data at different times
-                        but only care to refresh the page after they are all done.)</p>
+                        but only care to refresh the page after they are all done.)
+                        See <a href="/doc/files/code">Code</a> for a correct example.</p>
                     </div>
   
 
                   <!-- <p>When 
-                      <a href="/doc/files/dom-events" @click='data.Router.BrowseTo("/doc/files/dom-events", event)'>DOM Events</a> 
+                      <a href="/doc/dom-events" @click='data.Router.BrowseTo("/doc/dom-events", event)'>DOM Events</a> 
                       are handled, a (write) lock is acquired against the environment automatically
                     and then released when your event handler returns.  When things that would block (like fetching 
                     data from the server over HTTP) need to be done, this must be run in a goroutines which must use 

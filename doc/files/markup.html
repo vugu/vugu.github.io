@@ -472,7 +472,7 @@ nobody { color: #272822; background-color: #fafafa; }
 
 </div>
 
-                    <p>Note that the vg-html attribute outputs the value as HTML, using <code>fmt.Print()</code>, see below.</p>
+                    <p>Note that the vg-html attribute outputs the value as HTML, using <code>fmt.Sprint()</code>, see below.</p>
 
                     <p>
                       As a special case and for convenience, if the expression contains no whitespace it will be expanded to
@@ -576,7 +576,7 @@ nobody { color: #272822; background-color: #fafafa; }
                     <p>The vg-html attribute is used to output an expression as HTML into the contents of an element.
                       (It corresponds to the <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML">innerHTML</a> property.)
                       The expression converted to a string using 
-                      <a target="_blank" href="https://golang.org/pkg/fmt/#Print">fmt.Print()</a>.  Example:
+                      <a target="_blank" href="https://golang.org/pkg/fmt/#Sprint">fmt.Sprint()</a>.  Example:
                     </p>
 
 <div>
@@ -655,7 +655,7 @@ nobody { color: #272822; background-color: #fafafa; }
 </style>
 <pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;&#34;&lt;b&gt;an HTML string&lt;/b&gt;&#34;&#39;</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;123&#39;</span><span class="p">&gt;</span> <span class="c">&lt;!-- will be output according to fmt.Print rules --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;123&#39;</span><span class="p">&gt;</span> <span class="c">&lt;!-- will be output according to fmt.Sprint rules --&gt;</span>
     <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;html.EscapeString(&#34;escaping &amp; arbitrary text is easy like so&#34;)&#39;</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
 
