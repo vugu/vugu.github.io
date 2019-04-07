@@ -126,6 +126,9 @@
                 <li class="nav-item">
                   <a class="nav-link" href="https://godoc.org/github.com/vugu/vugu" target="_blank">GoDoc</a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="https://play.vugu.org/" target="_blank">Playground</a>
+                </li>
               </ul>
             </div>
           </nav>
@@ -493,7 +496,7 @@ nobody { color: #272822; background-color: #fafafa; }
 
 	<span class="c1">// check for vugugen and go get if not there
 </span><span class="c1"></span>	<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">LookPath</span><span class="p">(</span><span class="s">&#34;vugugen&#34;</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">distutil</span><span class="p">.</span><span class="nf">MustExec</span><span class="p">(</span><span class="s">&#34;go&#34;</span><span class="p">,</span> <span class="s">&#34;get&#34;</span><span class="p">,</span> <span class="s">&#34;github.com/vugu/vugu/vugugen&#34;</span><span class="p">))</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">distutil</span><span class="p">.</span><span class="nf">MustExec</span><span class="p">(</span><span class="s">&#34;go&#34;</span><span class="p">,</span> <span class="s">&#34;get&#34;</span><span class="p">,</span> <span class="s">&#34;github.com/vugu/vugu/cmd/vugugen&#34;</span><span class="p">))</span>
 	<span class="p">}</span>
 
 	<span class="c1">// run go generate
