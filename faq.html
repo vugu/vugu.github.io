@@ -1,419 +1,342 @@
-<!doctype html>
-<html>
-<head>
+<html><head>
 
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
-
-<link rel="mask-icon" href="/assets/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
+<title>Frequently Asked Questions</title>
 
 
-<title>Vugu Frequently Asked Questions</title>
 
+
+<!-- link rel="manifest" href="/assets/images/favicon/site.webmanifest" -->
+
+<meta name="msapplication-TileColor" content="#da532c"/>
+<meta name="theme-color" content="#ffffff"/>
+
+<!-- <title>{{.Title}}</title> -->
+<!-- <title>Vugu Dev - {{.Request.URL.Path}}</title> -->
+<!-- {{end}} -->
 <meta charset="utf-8"/>
 
 <meta name="description" content="What browsers are supported? Do it use any JS? Stability and compatibility? Roadmap? How does it build?"/>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link rel="stylesheet" href="/assets/css/vendor.css" />
-
-<link rel="stylesheet" href="/assets/css/style.css" />
-
-<script src="https://cdn.jsdelivr.net/npm/text-encoding@0.7.0/lib/encoding.min.js"></script> 
-<script src="/wasm_exec.js"></script>
-
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-137242493-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-137242493-1');
-</script>
-
-</head>
-<body>
-<div id="root_mount_parent">
-<style>
-#root .header {
-    background: #72ceff
-}
-
-#root .header + section {
-    padding-top: 0;
-}
-
-/* code formatting */
-#root pre.chroma {
-    border: 4px solid #f1f1f1;
-}
-
-#root .chroma .err {
-    background-color: transparent;
-}
-
-</style><div id="root">
+<!-- {{if .MetaTags}}{{range $k, $v := .MetaTags}} -->
+<!-- <meta name="{{$k}}" content="{{$v}}"/> -->
+<!-- {{end}}{{end}} -->
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!-- {{if .CSSFiles}}{{range $f := .CSSFiles}} -->
+<!-- <link rel="stylesheet" href="{{$f}}" /> -->
 
 
 
-    <!-- header -->
-    <header class="header ">
-      <div class="container">
-        <div class="row">
-          <nav class="navbar navbar-expand-lg navbar-light">
-            <a href="/" class="navbar-brand"><img src="/assets/images/logo-white.svg" alt="Logo"/></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
+<!-- {{end}}{{end}} -->
+ <!-- MS Edge polyfill -->
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                  <a href="/" ="&lt;nil&gt;" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a href="/doc/start" ="&lt;nil&gt;" class="nav-link">Getting Started</a>
-                </li>
-                <li class="nav-item">
-                  <a href="/doc" ="&lt;nil&gt;" class="nav-link">Documentation</a>
-                </li>
-                <li class="nav-item">
-                  <a href="/faq" ="&lt;nil&gt;" class="nav-link active">faq</a>
-                </li>
-                <!--
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="dropdown-1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Documentation
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="dropdown-1">
-                    <a class="dropdown-item" href="html/docs/layout-1.html">Layout 1</a>
-                    <a class="dropdown-item" href="html/docs/layout-2.html">Layout 2</a>
-                    <a class="dropdown-item" href="html/docs/layout-3.html">Layout 3</a>
-                    <a class="dropdown-item" href="html/docs/layout-4.html">Layout 4</a>
-                  </div>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="dropdown-2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Help Center
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="dropdown-2">
-                    <a class="dropdown-item" href="html/help/homepage-1.html">Homepage 1</a>
-                    <a class="dropdown-item" href="html/help/homepage-2.html">Homepage 2</a>
-                    <a class="dropdown-item" href="html/help/homepage-3.html">Homepage 3</a>
-                    <a class="dropdown-item" href="html/help/category.html">Category</a>
-                    <a class="dropdown-item" href="html/help/category-inner.html">Category Inner</a>
-                    <a class="dropdown-item" href="html/help/article-1.html">Article 1</a>
-                    <a class="dropdown-item" href="html/help/article-2.html">Article 2</a>
-                    <a class="dropdown-item" href="html/help/tutorial.html">Tutorial</a>
-                  </div>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="dropdown-3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Pages
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="dropdown-3">
-                    <a class="dropdown-item" href="html/pages/contact.html">Contact</a>
-                    <a class="dropdown-item" href="html/pages/changelog.html">Changelog</a>
-                    <a class="dropdown-item" href="html/pages/faq.html">FAQ</a>
-                    <a class="dropdown-item" href="html/pages/pricing.html">Pricing</a>
-                    <a class="dropdown-item" href="html/pages/terms.html">Terms</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="html/pages/404.html">404</a>
-                  </div>
-                </li>
-                -->
-              </ul>
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="https://github.com/vugu/vugu" target="_blank">GitHub</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="https://godoc.org/github.com/vugu/vugu" target="_blank">GoDoc</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="https://play.vugu.org/" target="_blank">Playground</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-      </div>
-    </header>
-    <!-- / header -->
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png"/><link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png"/><link rel="mask-icon" href="/assets/images/favicon/safari-pinned-tab.svg" color="#5bbad5"/><link rel="stylesheet" href="/assets/css/vendor.css"/><link rel="stylesheet" href="/assets/css/style.css"/><link rel="stylesheet" href="/assets/css/custom.css"/><style>
+    #root .header {
+        background: #72ceff
+    }
     
+    #root .header + section {
+        padding-top: 0;
+    }
     
-    <section>
+    /* code formatting */
+    #root pre.chroma {
+        border: 4px solid #f1f1f1;
+    }
+    
+    #root .chroma .err {
+        background-color: transparent;
+    }
+    
+</style></head><body><div id="root">
+<!-- {{if .ServerRenderedOutput}}{{.ServerRenderedOutput}}{{else}} -->
+<!-- <img style="position: absolute; top: 50%; left: 50%;" src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif"> -->
+<!-- {{end}} -->
 
-    <!-- hero -->
-    <section class="pb-0 pt-3">
-      <!-- <div class="image image-gradient-vertical" style="background-image:url(../../assets/images/image.jpg)"></div> -->
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col">
-            <h1 class="mb-3">FAQ</h1>
+<header class="header">
+        <div class="container">
+          <div class="row">
+            <nav class="navbar navbar-expand-lg navbar-light">
+              <a href="/" class="navbar-brand"><img src="/assets/images/logo-white.svg" alt="Logo"/></a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+  
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/doc/start" class="nav-link">Getting Started</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/doc" class="nav-link">Documentation</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/faq" class="nav-link active ">faq</a>
+                  </li>
+                </ul>
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/vugu/vugu" target="_blank">GitHub</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="https://godoc.org/github.com/vugu/vugu" target="_blank">GoDoc</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="https://play.vugu.org/" target="_blank">Playground</a>
+                  </li>
+                </ul>
+              </div>
+            </nav>
           </div>
         </div>
-      </div>
-    </section>
-    <!-- / hero -->
+      </header>
 
-    <!-- accordions -->
-    <section class="pb-3">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col">
-            <div class="accordion accordion-fluid" id="accordion-1">
-              <div class="card">
-                  
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="browser-support">
-                        What browers does this work in?
-                    </button>
+
+
+<section class="mb-2">
+    <div class="container overlay-item-top">
+        <div class="row">
+            <div class="col">
+                <div class="content boxed">
+                    <div class="row separated">
+
+                        <article class="col-md-12 content-body">
+                            <div>
+
+<div class="card-header" id="heading-1-1">
+                  <h5 class="mb-0 faq-title">
+                    What browers does this work in?
+                    <a href="#browser-support" id="browser-support" notclick="data.HandleClick(&#34;browser-support&#34;)">¶</a>
                   </h5>
                 </div>
-                
+                <div not-vg-if="data.SelectedID==&#34;browser-support&#34;">
+                  <div class="card-body">
+                    <p>Recent versions of Chrome, Firefox and Microsft Edge support WebAssembly and have been tested with basic Vugu functionality.</p>
+                    <p>Any browser that supports WebAssembly and is targetable by the Go compiler should work. 
+                      Mobile browser support is not yet well tested but moving forward the Vugu project is intended to support mobile
+                      to the extent that WebAssembly is.</p>
+                  </div>
+                </div>
 
-                <!--
                 <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="how-does-it-work" @click='data.HandleClick("how-does-it-work")'>
-                        In a nutshell, how does Vugu work?
-                    </button>
+                  <h5 class="mb-0 faq-title">
+                    Does this project use JavaScript at all?
+                    <a href="#does-it-use-js" id="does-it-use-js" notclick="data.HandleClick(&#34;does-it-use-js&#34;)">¶</a>
                   </h5>
                 </div>
-                <div vg-if='data.SelectedID=="how-does-it-work"'>
+                <div not-vg-if="data.SelectedID==&#34;does-it-use-js&#34;">
                   <div class="card-body">
                     <p>
-                        Vugu is a regular Go library that uses the <a target="_blank" href="https://golang.org/pkg/syscall/js/">syscall/js</a> package 
-                        to 
+                        Vugu files (.vugu) do not generally contain any JS at all, only Go code. 
+                    </p>
+                    <p>
+                        That said, access from a WebAssembly program to the Document Object Model does require calls to JavaScript methods.
+                        There is a small JavaScript file used internally by Vugu during the render process which is automatically
+                        embedded in each Vugu app.
+                        Also, Go&#39;s WebAssembly
+                        support currently requires wasm_exec.js to be loaded, another small file that provides some needed support and integration
+                        for the Go runtime.
+                    </p>
+                    <p>
+                        But everything else is just Go code running as WebAssembly.  For example when a handler for a click is registered, Vugu will
+                        call the appropriate <code>addEventListener</code> method on the DOM, but when the event is fired the Go WASM runtime immediately 
+                        translates this call into a Go method call and everything else is Go from there.
                     </p>
                   </div>
                 </div>
-                -->
 
                 <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="does-it-use-js">
-                        Does this project use JavaScript at all?
-                    </button>
-                  </h5>
-                </div>
-                
-
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="too-big-and-slow">
+                  <h5 class="mb-0 faq-title">
                         Are the binaries too big?  Is it slow?
-                    </button>
+                    <a href="#too-big-and-slow" id="too-big-and-slow" notclick="data.HandleClick(&#34;too-big-and-slow&#34;)">¶</a>
                   </h5>
                 </div>
-                
-
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="stability">
-                        What is the stability of the API of Vugu?  What compatibility issues can I expect?
-                    </button>
-                  </h5>
-                </div>
-                
-
-                
-
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="why-u-no-use-templates">
-                        Why doesn&#39;t Vugu use Go templates (html/template)?
-                    </button>
-                  </h5>
-                </div>
-                
-
-                
-                
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="roadmap">
-                        Where is this project headed?  What are the plans for its future?
-                    </button>
-                  </h5>
-                </div>
-                
-                
-                
-                
-                
-                
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="can-i-just-go-build">
-                        Can I just &#34;go build&#34; my project?
-                    </button>
-                  </h5>
-                </div>
-                
-
-
-                <!--
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="add-css-files" @click='data.HandleClick("add-css-files")'>
-                        How do I quickly add some CSS files to be included on every page?
-                    </button>
-                  </h5>
-                </div>
-                <div vg-if='data.SelectedID=="add-css-files"'>
+                <div not-vg-if="data.SelectedID==&#34;too-big-and-slow&#34;">
                   <div class="card-body">
-                    <p>
-                      Assuming you are using simplehttp, the easy way to do this is to go into your devserver.go or server.go 
-                      and add a block like this:</p>
-
-<div vg-html='showCode("go",`simplehttp.DefaultStaticData["CSSFiles"] = []string{
-  "/path/to/file1.css",
-  "/path/to/file2.css",
-  // ...
-}`)'></div>
-
-                    <p>The default setup will loop over those paths (in sequence) and add the appropriate <code><link</code> tags to the <code><head></code> section of your page.</p>
-
+                      <p>
+                          The binaries can be big, yes.  However, they gzip better than one might expect for a binary.  The average 
+                          browser download of compressed content for a reasonably sized-program is several megabytes.
+                          For some use cases this is completely workable, others it&#39;s a problem.
+                          Future improvements in size can be expected as the WebAssembly spec and Go&#39;s support for it both evolve.
+                      </p>
+                      <p>
+                        So far performance has been pretty good, but more testing is needed with larger applications.
+                      </p>
+                      <!-- <p>
+                          The calls between the Go WebAssembly binary at the browser to access DOM are not terribly fast.
+                          Last I checked it was around ~75µs per call (although it might be faster calling the same method over and over)
+                          and while it tries to minimize those calls it does have
+                          to do a lot of them when it builds out the DOM on the page.  But so far, 
+                          overall UI speeds have generally been managable.  For many applications speed won't be a problem, and it will only get faster 
+                          as things improve.
+                      </p> -->
                   </div>
                 </div>
-                -->
-              
 
+                <div class="card-header" id="heading-1-1">
+                  <h5 class="mb-0 faq-title">
+                        What is the stability of the API of Vugu?  What compatibility issues can I expect?
+                    <a href="#stability" id="stability" notclick="data.HandleClick(&#34;stability&#34;)">¶</a>
+                  </h5>
+                </div>
+                <div not-vg-if="data.SelectedID==&#34;stability&#34;">
+                  <div class="card-body">
+                    <p>For now, <strong>everything is experimental</strong>.</p>
+                    <p>
+                        Vugu uses <a target="_blank" href="https://github.com/golang/go/wiki/Modules">Go Modules</a> 
+                        which helps give developers expectations on API compatibility.  No release date is set for Vugu 1.0, so
+                        if you need some guarantee of API stability you can lock to a specific development version.
+                    </p>
+                    <p>
+                        A major refactor was done between Vugu v0.1.0 and v0.2.0, which among other things, involved
+                        a shift from dynamically registered components to all component references being expressed 
+                        statically so they are resolved at Go compile time.  This was a major breaking change but was necessary to handle some fundamental
+                        issues that came up with the initial prototype for this project.  While major breaking changes
+                        are unfortunate, the goal is to get those out of the way early, so 
+                        stability improves moving forward.  It is expected that the scope of the changes 
+                        will continue
+                        to narrow and be more involved with adding features rather than rewriting things.
+                    </p>
+                    <p>
+                        <a target="_blank" href="https://github.com/golang/go/wiki/WebAssembly">WebAssembly support in Go</a> itself is also currently experimental and breaking changes may arrive with each new release.
+                        We&#39;ll do our best to update Vugu following Go releases as quickly as possible.
+                    </p>
+                    <p>
+                        Once WebAssembly is no longer experimental in Go, and 
+                        <a target="_blank" href="https://webassembly.org/docs/future-features/">more mature in general</a>, Vugu 1.0 will probably be released at that time.
+                    </p>
+                  </div>
+                </div>
 
-              </div>
+                
+
+                <div class="card-header" id="heading-1-1">
+                  <h5 class="mb-0 faq-title">
+                        Why doesn&#39;t Vugu use Go templates (html/template)?
+                    <a href="#why-u-no-use-templates" id="why-u-no-use-templates" notclick="data.HandleClick(&#34;why-u-no-use-templates&#34;)">¶</a>
+                  </h5>
+                </div>
+                <div not-vg-if="data.SelectedID==&#34;why-u-no-use-templates&#34;">
+                  <div class="card-body">
+                    <p>Short answer: Because <strong>templates do not provide type safety</strong> or other compile-time checks.</p>
+                    <p>
+                        This was a major decision in Vugu&#39;s overall design and was not made lightly.  There are certainly arguments in favor
+                        of using templates, such as the fact that some expressions are shorter to represent and easier to understand.  Templates 
+                        also can be evaluated at runtime and do not require a Go compiler.
+                    </p>
+                    <p>
+                        This is contrasted by the fact that one of the major drawbacks to building a large user interface in JS is the 
+                        lack of type safety and other compile-time checks.  The TypeScript people invented a whole new language to address the problem. 
+                        The larger
+                        the code base, the more you need types and a compiler.  Modern UIs can be very sophisticated and Vugu intends
+                        to support complex projects well.  To do that, we need to leverage the Go compiler, which means that templates have
+                        Go expressions in them, not template code.  
+                    </p>
+                    <p>
+                        That said, it is not impossible that html/template support will be added to Vugu as an additional feature in the future.
+                        <!-- It's also possible for a fully-templated implementation of
+                        components to be made (after all, <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ComponentType">ComponentType</a> is just an interface, 
+                        and anything that can generate virtual DOM and instantiate some data can be a component);
+                        this could potentially be of use for components that are loaded dynamically at runtime.  These ideas certainly warrant 
+                        further discussion and exploration. -->
+                    </p>
+                  </div>
+                </div>
+
+                
+                
+                <div class="card-header" id="heading-1-1">
+                  <h5 class="mb-0 faq-title">
+                        Where is this project headed?  What are the plans for its future?
+                    <a href="#roadmap" id="roadmap" notclick="data.HandleClick(&#34;roadmap&#34;)">¶</a>
+                  </h5>
+                </div>
+                <div not-vg-if="data.SelectedID==&#34;roadmap&#34;">
+                  <div class="card-body">
+                    <p>The intention is to provide feature parity with Vue/React/Angular.</p>
+                    <p>
+                        A lot of the basic functionality for markup, components and DOM events is already working well.
+                        <!-- See the <a target="_blank" href="https://github.com/vugu/vugu/blob/master/README.md">GitHub Readme</a> for the roadmap. -->
+                    </p>
+                    <p>
+                        Some features don&#39;t translate well (like data binding), but still, the idea is that by the time we 
+                        get to 1.0 &#34;pretty much anything you can do in Vue, React or Angular, you can do in Vugu&#34;. 
+                    </p>
+                  </div>
+                </div>
+                
+                
+                
+                
+                
+                <div class="card-header" id="heading-1-1">
+                  <h5 class="mb-0 faq-title">
+                        Can I just &#34;go build&#34; my project?
+                    <a href="#can-i-just-go-build" id="can-i-just-go-build" notclick="data.HandleClick(&#34;can-i-just-go-build&#34;)">¶</a>
+                  </h5>
+                </div>
+                <div not-vg-if="data.SelectedID==&#34;can-i-just-go-build&#34;">
+                  <div class="card-body">
+                    <p>You&#39;ll also need to use <code>go generate</code> with <code>vugugen</code> to convert your your .vugu files to .go before building.
+                        But otherwise, <strong>yes</strong>, no special build tools are required.</p>
+                    <p>However, for convenience, there is a development webserver (implements the standard http.Handler)
+                        which can be used to rapidly prototype new projects and takes care of building your project to a .wasm file on the fly and serving
+                        it to the browser.</p>
+                    <p>Read more in the <a href="/doc/build-and-dist">Build and Dist</a> section.</p>
+                    <p>
+                      One of the core ideas behind Vugu is that it is fundamentally a library, rather than a framework.
+                      The distinction being that with a framework, it calls your code.  With a library, you call it.
+                      It is considered vital to the success of this project that we use existing Go tools and not try 
+                      to unnecessarily wrap things or obscure the regular tools that Go developers are used to.
+                      At the end of the day, Vugu programs are just regular Go programs - with a main function and 
+                      you call some methods in the Vugu library. Keeping that idea in place as the project evolves
+                      is a core concept behind Vugu.
+                    </p>
+                  </div>
+                </div>
+
+</div>
+                        </article>
+
+                        
+                        
+
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </section>
-    <!-- / accordions -->
-
-
-
+    </div>
 </section>
 
-        <!-- hero 
-        <section class="hero pb-0">
-                <div class="image image-gradient-vertical" style="background-image:url(../../assets/images/image.jpg)"></div>
-                <div class="container">
-                  <div class="row justify-content-center">
-                    <div class="col">
-                      <h1 class="mb-5">FAQ</h1>
-                    </div>
-                  </div>
-                </div>
-              </section>
-              hero -->
 
 
-                  <!-- accordions -->
-    <!-- <section class="pb-0">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col">
-            <div class="accordion accordion-fluid" id="accordion-1">
-              <div class="card">
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-1-1" aria-expanded="false" aria-controls="collapse-1-1">
-                      Transfer my domain to another registrar
-                    </button>
-                  </h5>
-                </div>
+<footer class="bg-dark">
+
+    <div class="container">
+
+        
+
+        <div class="row mt-0 pt-2 pb-1">
+
+            <div class="col-12 col-md-2">
+                <a href="/"><img src="/assets/images/logo-white.svg" alt="Logo"/></a>
             </div>
-            </div>
+
+            <div class="col-12 col-md-4 col-lg-2 ml-auto text-md-right">Copyright (C) <span>2020</span></div>
+
         </div>
-    </section> -->
 
+    </div>
 
+</footer>
 
-
-    <!-- <div>jfkdlsjaflkdsja</div> -->
-
-    <!--
-        DOESN'T WORK, needs figure-out 
-        div vg-if="comp.Router.PathChecksFailed()">
-        Sorry, the page you requested was not found.
-    </div -->
-
-    <!-- footer -->
-    <footer class="bg-dark">
-      <div class="container">
-        <div class="row gutter-3">
-          <div class="col-12 col-md-2">
-            <a href=""><img src="/assets/images/logo-white.svg" alt="Logo"/></a>
-          </div>
-
-          <div class="col-12 col-md-6 text-white collapse">
-            <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <div class="row">
-              <div class="col">
-                <ul class="list-group list-group-minimal">
-                  <li class="list-group-item"><a href="" class="link">Product Help</a></li>
-                  <li class="list-group-item"><a href="" class="link">Training Videos</a></li>
-                  <li class="list-group-item"><a href="" class="link">Integrations</a></li>
-                </ul>
-              </div>
-              <div class="col">
-                <ul class="list-group list-group-minimal">
-                  <li class="list-group-item"><a href="" class="link">REST API</a></li>
-                  <li class="list-group-item"><a href="" class="link">Corporate</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-12 col-md-4 col-lg-2 ml-auto text-md-right">
-
-            Copyright (C) 2019
-
-            <div class="dropdown collapse">
-              <button class="btn btn-inverted btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                English
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">French</a>
-                <a class="dropdown-item" href="#">German</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </footer>
-    <!-- / footer -->
-
-
-
-
-</div>
-</div>
-<script>
-var wasmSupported = (typeof WebAssembly === "object");
-if (wasmSupported) {
-	if (!WebAssembly.instantiateStreaming) { 
-		WebAssembly.instantiateStreaming = async (resp, importObject) => {
-			const source = await (await resp).arrayBuffer();
-			return await WebAssembly.instantiate(source, importObject);
-		};
-	}
-	const go = new Go();
-	WebAssembly.instantiateStreaming(fetch("/main.wasm"), go.importObject).then((result) => {
-		go.run(result.instance);
-	});
-} else {
-	
-	console.log("Full functionality requires WebAssembly support.  Please upgrade your browser.")
-}
-</script>
-</body>
-</html>
+</div></body></html>

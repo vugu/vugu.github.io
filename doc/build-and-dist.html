@@ -1,227 +1,137 @@
-<!doctype html>
-<html>
-<head>
-
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
-
-<link rel="mask-icon" href="/assets/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-
+<html><head>
 
 <title>Building and Distribution</title>
 
+
+
+
+<!-- link rel="manifest" href="/assets/images/favicon/site.webmanifest" -->
+
+<meta name="msapplication-TileColor" content="#da532c"/>
+<meta name="theme-color" content="#ffffff"/>
+
+<!-- <title>{{.Title}}</title> -->
+<!-- <title>Vugu Dev - {{.Request.URL.Path}}</title> -->
+<!-- {{end}} -->
 <meta charset="utf-8"/>
 
 <meta name="description" content="To make a proper server suitable for staging or production, or to start adding more server-side functionality to, you&#39;ll want to create a server.go file, and place separate web server code in here."/>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link rel="stylesheet" href="/assets/css/vendor.css" />
-
-<link rel="stylesheet" href="/assets/css/style.css" />
-
-<script src="https://cdn.jsdelivr.net/npm/text-encoding@0.7.0/lib/encoding.min.js"></script> 
-<script src="/wasm_exec.js"></script>
-
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-137242493-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-137242493-1');
-</script>
-
-</head>
-<body>
-<div id="root_mount_parent">
-<style>
-#root .header {
-    background: #72ceff
-}
-
-#root .header + section {
-    padding-top: 0;
-}
-
-/* code formatting */
-#root pre.chroma {
-    border: 4px solid #f1f1f1;
-}
-
-#root .chroma .err {
-    background-color: transparent;
-}
-
-</style><div id="root">
+<!-- {{if .MetaTags}}{{range $k, $v := .MetaTags}} -->
+<!-- <meta name="{{$k}}" content="{{$v}}"/> -->
+<!-- {{end}}{{end}} -->
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!-- {{if .CSSFiles}}{{range $f := .CSSFiles}} -->
+<!-- <link rel="stylesheet" href="{{$f}}" /> -->
 
 
 
-    <!-- header -->
-    <header class="header ">
-      <div class="container">
-        <div class="row">
-          <nav class="navbar navbar-expand-lg navbar-light">
-            <a href="/" class="navbar-brand"><img src="/assets/images/logo-white.svg" alt="Logo"/></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
+<!-- {{end}}{{end}} -->
+ <!-- MS Edge polyfill -->
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                  <a href="/" ="&lt;nil&gt;" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a href="/doc/start" ="&lt;nil&gt;" class="nav-link">Getting Started</a>
-                </li>
-                <li class="nav-item">
-                  <a href="/doc" ="&lt;nil&gt;" class="nav-link active">Documentation</a>
-                </li>
-                <li class="nav-item">
-                  <a href="/faq" ="&lt;nil&gt;" class="nav-link">faq</a>
-                </li>
-                <!--
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="dropdown-1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Documentation
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="dropdown-1">
-                    <a class="dropdown-item" href="html/docs/layout-1.html">Layout 1</a>
-                    <a class="dropdown-item" href="html/docs/layout-2.html">Layout 2</a>
-                    <a class="dropdown-item" href="html/docs/layout-3.html">Layout 3</a>
-                    <a class="dropdown-item" href="html/docs/layout-4.html">Layout 4</a>
-                  </div>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="dropdown-2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Help Center
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="dropdown-2">
-                    <a class="dropdown-item" href="html/help/homepage-1.html">Homepage 1</a>
-                    <a class="dropdown-item" href="html/help/homepage-2.html">Homepage 2</a>
-                    <a class="dropdown-item" href="html/help/homepage-3.html">Homepage 3</a>
-                    <a class="dropdown-item" href="html/help/category.html">Category</a>
-                    <a class="dropdown-item" href="html/help/category-inner.html">Category Inner</a>
-                    <a class="dropdown-item" href="html/help/article-1.html">Article 1</a>
-                    <a class="dropdown-item" href="html/help/article-2.html">Article 2</a>
-                    <a class="dropdown-item" href="html/help/tutorial.html">Tutorial</a>
-                  </div>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="dropdown-3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Pages
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="dropdown-3">
-                    <a class="dropdown-item" href="html/pages/contact.html">Contact</a>
-                    <a class="dropdown-item" href="html/pages/changelog.html">Changelog</a>
-                    <a class="dropdown-item" href="html/pages/faq.html">FAQ</a>
-                    <a class="dropdown-item" href="html/pages/pricing.html">Pricing</a>
-                    <a class="dropdown-item" href="html/pages/terms.html">Terms</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="html/pages/404.html">404</a>
-                  </div>
-                </li>
-                -->
-              </ul>
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="https://github.com/vugu/vugu" target="_blank">GitHub</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="https://godoc.org/github.com/vugu/vugu" target="_blank">GoDoc</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="https://play.vugu.org/" target="_blank">Playground</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-      </div>
-    </header>
-    <!-- / header -->
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png"/><link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png"/><link rel="mask-icon" href="/assets/images/favicon/safari-pinned-tab.svg" color="#5bbad5"/><link rel="stylesheet" href="/assets/css/vendor.css"/><link rel="stylesheet" href="/assets/css/style.css"/><link rel="stylesheet" href="/assets/css/custom.css"/><style>
+    #root .header {
+        background: #72ceff
+    }
     
-    <section class="site-doc">
+    #root .header + section {
+        padding-top: 0;
+    }
+    
+    /* code formatting */
+    #root pre.chroma {
+        border: 4px solid #f1f1f1;
+    }
+    
+    #root .chroma .err {
+        background-color: transparent;
+    }
+    
+</style></head><body><div id="root">
+<!-- {{if .ServerRenderedOutput}}{{.ServerRenderedOutput}}{{else}} -->
+<!-- <img style="position: absolute; top: 50%; left: 50%;" src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif"> -->
+<!-- {{end}} -->
 
-
-    <!-- hero -->
-    <section class="hero bg-blue">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-8 text-white mb-3">
-            <h1 class="h2 pb-1 pt-2">Building and Distribution</h1>
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb breadcrumb-minimal">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="/doc">Doc</a></li>
-                <li class="breadcrumb-item active">Building and Distribution</li>
-              </ol>
+<header class="header">
+        <div class="container">
+          <div class="row">
+            <nav class="navbar navbar-expand-lg navbar-light">
+              <a href="/" class="navbar-brand"><img src="/assets/images/logo-white.svg" alt="Logo"/></a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+  
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/doc/start" class="nav-link">Getting Started</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/doc" class="nav-link active ">Documentation</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/faq" class="nav-link">faq</a>
+                  </li>
+                </ul>
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/vugu/vugu" target="_blank">GitHub</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="https://godoc.org/github.com/vugu/vugu" target="_blank">GoDoc</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="https://play.vugu.org/" target="_blank">Playground</a>
+                  </li>
+                </ul>
+              </div>
             </nav>
           </div>
         </div>
+      </header>
+
+<div>
+<section class="hero bg-blue">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 text-white mb-3">
+          <h1 class="h2 pb-1 pt-2">Building and Distribution</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-minimal">
+              <li class="breadcrumb-item"><a href="/" notclick="data.Router.BrowseTo(&#34;/&#34;, event)">Home</a></li>
+              <li class="breadcrumb-item"><a href="/doc" notclick="data.Router.BrowseTo(&#34;/doc&#34;, event)">Doc</a></li>
+              <li class="breadcrumb-item active">Building and Distribution</li>
+            </ol>
+          </nav>
+        </div>
       </div>
-    </section>
-    <!-- / hero -->
+    </div>
+  </section>
+</div>
 
-
-    <!-- sidebar layout -->
-    <section class="">
-      <div class="container overlay-item-top">
+<section class="mb-2">
+    <div class="container overlay-item-top">
         <div class="row">
-          <div class="col">
-            <div class="content boxed">
-              <div class="row separated">
+            <div class="col">
+                <div class="content boxed">
+                    <div class="row separated">
 
-                <!-- content -->
+                        
 
-                
+                        <article class="col-md-8 content-body">
+                            <div>
 
-                
-
-                
-
-                
-
-                
-
-                
-
-                
-
-                
-                
-                
-
-                <!--
-                <article class="col-md-8 content-body" vg-if='allPages.FindByPathOrEmpty(data.Router.Path()).Path=="/doc/components-in-depth"'>
-                  components in depth
-
-                  mention generated BuildVDOM and that you can look at a generated .go file to see, but it's done automatically
-                  variables available - comp, data, event 
-
-                  explain for loops and bound attributes and how these end up in go code 
-
-                  NewData method  and in which cases it's called
-
-                  Comp struct, only one instance for the whole app, corresponds to the component type, can have config here if needed for complex cases, but often this is just empty
-                  
-                  show component written manually in Go, with all it's parts - comments to show what is auto generated and 
-                  what would normally be copied from the vugu file
-
-                </article>
-                -->
-
-                <article class="col-md-8 content-body">
-
-                    <!-- <p>Building and Distribution</p> -->
-
-                    <p>The development setup described in 
+<p>The development setup described in 
                       <a href="/doc/start">Getting Started</a>
                       is a great way to get going with Vugu. But 
                       when you&#39;re ready to move your application to a staging or production environment (or you need
@@ -231,7 +141,8 @@
 
                     <h2>Adding a Server</h2>
 
-                    <p>The server you created on the Getting Started page is only a single file, it does not
+                    <p>The server you created on the Getting Started page is only a single file (devserver.go), 
+                      it does not
                       compile as part of your application (due to the <code>// +build ignore</code> at the top).
                       The main reason for this is that it makes things simpler when you are just hacking away
                       on your user interface.  If you enter bad code into a .vugu file (which ends up 
@@ -240,7 +151,7 @@
                     </p>
 
                     <p>To make a proper server suitable for staging or production, or to start adding more 
-                      server-side functionality to, you&#39;ll want to create a server.go file, and place separate 
+                      server-side functionality, you&#39;ll want to create a server.go file, and place separate 
                       web server code in here.  It is suggested you leave devserver.go where it is and you can 
                       use it if/when needed, it won&#39;t conflict with server.go.
                     </p>
@@ -538,373 +449,94 @@ nobody { color: #272822; background-color: #fafafa; }
                       deployment.  And you can of course easily call this from another build/distribution system, 
                       such as a Dockerfile.
                     </p>
-                    
-                    <!--
-                    .gitignore dist folder
 
-                    server.go should have flag for dev and flag for http listener and flag for main dir, defaulting to "."
+</div>
+                        </article>
+                        <aside class="col-md-4 content-aside bg-light">
+                            <div class="widget">
+    <h3 class="widget-title">Documentation</h3>
+    <div class="list-group list-group-related">
 
-                    make sure to include go:generate in server.go
+        <!-- active -->
+        <a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>What is Vugu?</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/start">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Getting Started</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/files">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Vugu Files</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/files/markup">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Markup (HTML/Go)</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/files/style">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Styles (CSS)</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/files/code">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Code (Go)</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/dom-events">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>DOM Events</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/components">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Using Components</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/program">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Program Structure</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center active" href="/doc/build-and-dist">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Building and Distribution</span>
+        </a>
 
-                    <p>need to mention how to set title and meta tags as part of setting up server
+        <!-- <a vg-for="allPages.SiteDocPages()" :href="value.Path"
+            @click="data.Router.BrowseTo(value.Path, event)"
+            class="list-group-item list-group-item-action d-flex align-items-center active">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span vg-html="value.ShortTitle"></span>
+        </a> -->
 
-                      actually we need to show two approaches here - one with a dev/prod Go server, along with its 
-                      build script
+    </div>
+</div>
+                        </aside>
 
-                      and then an entirely different setup which outputs static HTML to the dist folder,
-                       for use with static file servers, CDNs, etc.
-
-                       bulleted list for each?
-                    </p>
-                    -->
-
-                </article>
-                
-
-                
-                <!--
-                <article class="col-md-8 content-body">
-
-                  <p>You can change a domain's contact information at any time. Domains have four sets of contacts, which are listed below after the instructions.</p>
-
-                  <div class="alert alert-warning" role="alert">
-                    <i class="icon-alert-circle"></i>
-                    <h4 class="fs-22">Tip</h4>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos minus, qui error eveniet! Et consequuntur fugit nulla nam</p>
-                  </div>
-
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id illo eveniet blanditiis aliquam voluptatem quaerat sapiente alias ex pariatur quasi, ipsa dolorem impedit nemo eius, hic est magnam quisquam soluta!</p>
-
-
-                  <section id="section-1">
-                    <h2 class="section-title-2">Quick Start <a data-scroll href="#section-2" class="anchor" data-toggle="tooltip" data-placement="top" title="Copy URL"><i class="icon-hash"></i></a></h2>
-                    <ol class="step-list">
-                      <li><div>
-                        <p>Go to the <a href="" class="external">Domains Settings</a> page.</p>
-                      </div></li>
-                      <li><div>
-                        <p>Under Contact Information, click Edit. (Note: if you don't see the Edit link, you may have Domain Privacy turned on. Click the View personal information link, and then you'll be able to click the Edit link.)</p>
-                      </div>
-                        <ol>
-                          <li><div>
-                            <p>To edit All Contacts, enter the Contact, Address, Phone, and Email information you want to update, and then click OK.</p>
-                          </div></li>
-                          <li><div>
-                            <p>To edit each individual contact, clear the Use for all contact types check box and enter the information you want to update.</p>
-                          </div></li>
-                        </ol>
-                      </li>
-                      <li><div>
-                        <p>Click Save</p>
-                      </div></li>
-                    </ol>
-                  </section>
-
-
-                  <section id="section-2">
-                    <h2 class="section-title-2">Video Preview <a data-scroll href="#section-2" class="anchor" data-toggle="tooltip" data-placement="top" title="Copy URL"><i class="icon-hash"></i></a></h2>
-                    <div class="row">
-                      <div class="col-12">
-                        <video
-                          id="video"
-                          class="youtube video-js vjs-default-skin video-16-9"
-                          controls
-                          width="640" height="264"
-                          data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=DkeiKbqa02g"}], "youtube": { "ytControls": 2 } }'
-                        >
-                        </video>
-                      </div>
                     </div>
-                  </section>
-
-
-                  <section id="section-3">
-                    <h2 class="section-title-2">Typography <a data-scroll href="#section-3" class="anchor" data-toggle="tooltip" data-placement="top" title="Copy URL"><i class="icon-hash"></i></a></h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae debitis dicta, dolorum modi aliquam praesentium, molestias! Quibusdam magni natus eligendi, delectus odit, veritatis dignissimos voluptate dolorum vitae laborum fuga? Facilis.</p>
-                    <div class="row gutter-2">
-                      <div class="col-8 col-md-5">
-                        <div class="type boxed">
-                          <div>
-                            <span class="badge badge-primary">New</span>
-                            <h5 class="type-title">Open Sans</h5>
-                            <div class="type-example">
-                              <span>Ab</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-8 col-md-5">
-                        <div class="type bordered">
-                          <div>
-                            <h5 class="type-title">Open Sans</h5>
-                            <div class="type-example">
-                              <span>Ab</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-
-                  <section id="section-4">
-                    <h2 class="section-title-2">File Tree <a data-scroll href="#section-4" class="anchor" data-toggle="tooltip" data-placement="top" title="Copy URL"><i class="icon-hash"></i></a></h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit magnam exercitationem fugit doloremque ut, neque nobis fuga voluptatum minima officiis iure consectetur nemo maiores, hic qui rem quae dolor dolorem.</p>
-                    <div class="row">
-                      <div class="col-md-8">
-                        <div class="bordered p-2 p-md-5">
-                          <ul class="file-tree">
-                            <li class="file-tree-folder empty">Images
-                              <span>description</span>
-                            </li>
-                            <li class="file-tree-folder">CSS
-                              <span>description</span>
-                              <ul>
-                                <li>file name <span>description</span></li>
-                                <li>file name <span>description</span></li>
-                              </ul>
-                            </li>
-                            <li class="file-tree-folder">HTML
-                              <span>description</span>
-                              <ul>
-                                <li class="file-tree-folder">PAGES
-                                  <span>description</span>
-                                  <ul>
-                                    <li>file name <span>description</span></li>
-                                    <li>file name <span>description</span></li>
-                                    <li>file name <span>description</span></li>
-                                  </ul>
-                                </li>
-                                <li>file name <span>description</span></li>
-                                <li>file name <span>description</span></li>
-                              </ul>
-                            </li>
-                            <li>index.html <span>description</span></li>
-                            <li>components.html <span>description</span></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-
-                </article>
-                -->
-
-
-                <!-- / content -->
-
-
-                <!-- sidebar -->
-                <aside class="col-md-4 content-aside bg-light">
-                  <div class="widget">
-                    <h3 class="widget-title">Documentation</h3>
-                    <div class="list-group list-group-related">
-
-                      <a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>What is Vugu?</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/start">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>Getting Started</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/files">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>Vugu Files</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/files/markup">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>Markup (HTML/Go)</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/files/style">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>Styles (CSS)</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/files/code">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>Code (Go)</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/dom-events">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>DOM Events</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/components">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>Using Components</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/program">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>Program Structure</span>
-                      </a><a class="list-group-item list-group-item-action d-flex align-items-center active" ="&lt;nil&gt;" href="/doc/build-and-dist">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        <span>Building and Distribution</span>
-                      </a>
-
-                      <!--
-                      <a href="#" class="list-group-item list-group-item-action d-flex align-items-center active">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        Registering Domain Names
-                      </a>
-                      <a href="#" class="list-group-item list-group-item-action d-flex align-items-center active">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        What's the difference between a domain and a website?
-                      </a>
-                      <a href="#" class="list-group-item list-group-item-action d-flex align-items-center active">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        What is protected registration ?
-                      </a>
-                      <a href="#" class="list-group-item list-group-item-action d-flex align-items-center active">
-                        <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
-                        Transfer domain to another registrar
-                      </a>
-                      -->
-                    </div>
-                  </div>
-
-                </aside>
-                <!-- / sidebar -->
-
-
-              </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </section>
-    <!-- / sidebar layout -->
-
-
-
-
-    <!-- TODO: this is kinda cool, see if we can hack it in later -->
-    <!-- interpost -->
-    <section class="bg-dark text-white separator-bottom p-0">
-      <div class="container">
-        <div class="row gutter-0">
-          <div class="col-12 col-md-6">
-            <br/>
-            <!-- <h4 class="interpost interpost-prev"><a href="">Forwarding your incoming support email to Zendesk using Yahoo</a></h4> -->
-          </div>
-          <div class="col-12 col-md-6 text-right">
-              <!-- interpost-next  - this class was causing some funk, took it out -->
-            
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- / interpost -->
-
-
-
-
-
+    </div>
 </section>
-    
-
-        <!-- hero 
-        <section class="hero pb-0">
-                <div class="image image-gradient-vertical" style="background-image:url(../../assets/images/image.jpg)"></div>
-                <div class="container">
-                  <div class="row justify-content-center">
-                    <div class="col">
-                      <h1 class="mb-5">FAQ</h1>
-                    </div>
-                  </div>
-                </div>
-              </section>
-              hero -->
 
 
-                  <!-- accordions -->
-    <!-- <section class="pb-0">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col">
-            <div class="accordion accordion-fluid" id="accordion-1">
-              <div class="card">
-                <div class="card-header" id="heading-1-1">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-1-1" aria-expanded="false" aria-controls="collapse-1-1">
-                      Transfer my domain to another registrar
-                    </button>
-                  </h5>
-                </div>
+
+<footer class="bg-dark">
+
+    <div class="container">
+
+        <div class="row gutter-0">
+            <div class="col-12 col-md-6">
+                <h4 class="prev-next-part">
+                    <a href="/doc/program">« Vugu Program Structure</a>
+                </h4>
             </div>
+            <div class="col-12 col-md-6 text-right">
+                
             </div>
         </div>
-    </section> -->
 
+        <div class="row mt-0 pt-2 pb-1">
 
-
-
-    <!-- <div>jfkdlsjaflkdsja</div> -->
-
-    <!--
-        DOESN'T WORK, needs figure-out 
-        div vg-if="comp.Router.PathChecksFailed()">
-        Sorry, the page you requested was not found.
-    </div -->
-
-    <!-- footer -->
-    <footer class="bg-dark">
-      <div class="container">
-        <div class="row gutter-3">
-          <div class="col-12 col-md-2">
-            <a href=""><img src="/assets/images/logo-white.svg" alt="Logo"/></a>
-          </div>
-
-          <div class="col-12 col-md-6 text-white collapse">
-            <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <div class="row">
-              <div class="col">
-                <ul class="list-group list-group-minimal">
-                  <li class="list-group-item"><a href="" class="link">Product Help</a></li>
-                  <li class="list-group-item"><a href="" class="link">Training Videos</a></li>
-                  <li class="list-group-item"><a href="" class="link">Integrations</a></li>
-                </ul>
-              </div>
-              <div class="col">
-                <ul class="list-group list-group-minimal">
-                  <li class="list-group-item"><a href="" class="link">REST API</a></li>
-                  <li class="list-group-item"><a href="" class="link">Corporate</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-12 col-md-4 col-lg-2 ml-auto text-md-right">
-
-            Copyright (C) 2019
-
-            <div class="dropdown collapse">
-              <button class="btn btn-inverted btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                English
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">French</a>
-                <a class="dropdown-item" href="#">German</a>
-              </div>
+            <div class="col-12 col-md-2">
+                <a href="/"><img src="/assets/images/logo-white.svg" alt="Logo"/></a>
             </div>
 
-          </div>
+            <div class="col-12 col-md-4 col-lg-2 ml-auto text-md-right">Copyright (C) <span>2020</span></div>
+
         </div>
-      </div>
-    </footer>
-    <!-- / footer -->
 
+    </div>
 
+</footer>
 
-
-</div>
-</div>
-<script>
-var wasmSupported = (typeof WebAssembly === "object");
-if (wasmSupported) {
-	if (!WebAssembly.instantiateStreaming) { 
-		WebAssembly.instantiateStreaming = async (resp, importObject) => {
-			const source = await (await resp).arrayBuffer();
-			return await WebAssembly.instantiate(source, importObject);
-		};
-	}
-	const go = new Go();
-	WebAssembly.instantiateStreaming(fetch("/main.wasm"), go.importObject).then((result) => {
-		go.run(result.instance);
-	});
-} else {
-	
-	console.log("Full functionality requires WebAssembly support.  Please upgrade your browser.")
-}
-</script>
-</body>
-</html>
+</div></body></html>
