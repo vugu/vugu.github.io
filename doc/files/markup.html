@@ -534,6 +534,13 @@ nobody { color: #272822; background-color: #fafafa; }
         you can use <code>vg-for.noshadow</code> instead of <code>vg-for</code>.
       </p>
 
+      <p>
+        When <code>vg-for</code> is used in conjuction with <a href="/doc/components">nested components</a>,
+        a <code>vg-key</code> attribute can be used to determine which components to re-use across render cycles.
+        When vg-key appears on a vg-for it specifies the default expression for component references inside the loop.
+        This can then be overridden on individual component references as needed.
+      </p>
+
       <h3>Raw HTML with <code>vg-html</code></h3>
 
       <p>The vg-html attribute is used to output an expression as HTML into the contents of an element.
@@ -734,6 +741,96 @@ nobody { color: #272822; background-color: #fafafa; }
         <a href="/doc/components">Components</a> page for more info.
       </p>
 
+      <h3>Property Assignment with <code>.</code></h3>
+
+      <p>Completely separate from HTML attributes, HTML DOM elements have JavaScript properties associated with them.
+        These can be assigned from a Go expression by using a property name that starts with a period.  Example:</p>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;checkbox&#34;</span> <span class="err">.</span><span class="na">checked</span><span class="o">=</span><span class="s">&#34;false&#34;</span><span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></pre>
+
+
+</div>
+
+      <p>Values are evaluated as a Go expression (<code>false</code> in this case) and then run through <code>json.Marshal</code> and the resulting value is assigned in JS.</p>
+
+      <p>This can be useful for form or other elements that have JS properties which do not have an exact corresponding HTML attribute.</p>
+
       <h3>DOM Events with <code>@</code></h3>
 
       <p>Event handlers can be attached to HTML elements (à la 
@@ -880,14 +977,45 @@ nobody { color: #272822; background-color: #fafafa; }
         <li><code>key</code> and <code>value</code> - See section covering vg-for above.  These are the 
           default names used for implied range expressions.
       </li></ul>
-
+      
       <p>Please note that variables that your code declares, e.g. in a vg-for loop, should not start with <code>vg</code>, in order 
         to avoid conflicting with generated code.
       </p>
 
-      <!-- <h3 id="full-html">Full HTML Mode</h3>
+      <h3>Tag and Attribute Naming Conventions</h3>
 
-      <p>(TODO)</p> -->
+      <p>The following is a general list of rules which apply as regards the names of tags and attributes in Vugu markup:</p>
+
+      <ul>
+        <li><strong>Attributes (with no prefix character) are just strings.</strong>  Given <code>&lt;div id=&#34;blah&#34;&gt;</code>, &#34;blah&#34; is just a string (no quotes included).</li>
+        <li><strong>Attribute names preceded with a colon are Go expressions.</strong>  Given <code>&lt;div :id=&#39;&#34;bl&#34;+&#34;ah&#34;&#39;&gt;`</code>, <code>&#34;bl&#34;+&#34;ah&#34;</code> is a Go expression.</li>
+        <li><strong>Attributes beginning with <code>vg-</code> contain Go code, according to their named purpose.</strong>  E.g. <code>vg-html</code> is used for an expression that gets <code>fmt.Sprint</code>ed, <code>vg-for</code> contains the loop of a for statement, and <code>vg-if</code> contains the condition of an if statement.</li>
+        <li><strong>Tags that start with <code>vg-</code> can have specilized attributes</strong> which are not prefixed (e.g. <code>&lt;vg-comp expr=&#34;....</code>)</li>
+        <li><strong>Static component references contain a colon in the element name</strong> in the form of <code>pkg:Component</code>.  E.g. <code>&lt;somepkg:SomeComp&gt;</code> corresponds to a struct named <code>SomeComp</code> in a package imported as &#34;somepkg&#34;.</li>
+        <li><strong>Attribute names that start with an upper case letter correspond to Go struct field names.</strong>  It seems a happy coincidence that modern HTML documents almost always do (and always can) use lower case attribute names.  This leaves attribute names that start with an upper case letter to have the meaning of corresponding to a (exported) Go struct field name.  E.g. given <code>&lt;somepkg:SomeComp :FieldA=&#34;1&#34; FieldB=&#34;blah&#34;&gt;</code>, <code>FieldA</code> and <code>FieldB</code> are struct fields on <code>SomeComp</code>, but notice the colon and so these correspond to <code>someCompInst.FieldA = 1</code> and <code>someCompInst.FieldB = &#34;blah&#34;</code></li>
+        <li><strong>Lower case attributes on components are dynamic</strong></li>
+      </ul>
+        
+      <h3 id="full-html">Full-HTML Mode</h3>
+
+      <p>
+      Your root.vugu can now start with an <code>&lt;html&gt;</code> tag.</p>
+
+      <p>This allows access to title and meta tags as well as style and JS script includes.</p>
+
+      <p>Certain aspects of full-HTML mode are still under construction.  Please create an 
+        <a target="_blank" href="https://github.com/vugu/vugu/issues">issue on GitHub</a> if you run into something missing that you need.</p>
+
+      <p>A few rules that apply when using full-HTML mode:</p>
+
+      <ul>
+        <li><strong>Only the root component</strong> in the application can start with an &lt;html&gt; tag.</li>
+        <li><strong>Style and script tags</strong> have their sequence preserved but may be output at a different location on the page than where you put them.
+        (This is for reasons having to do with how Vugu accumulates and renders style and script elements in various components and how it copes with the 
+        disparity between full-HTML and regular components.)</li>
+        <li><strong>The body tag must contain a single element</strong> and this is used as the main content of the component during rendering.  Attempting 
+        to include multiple elements directly inside &lt;body&gt; may lead to unspecified behavior and/or errors.</li>
+      </ul>
 
 </div>
                         </article>

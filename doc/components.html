@@ -130,7 +130,6 @@
 
                         <article class="col-md-8 content-body">
                             <div>
-
                     <p>
                       <strong>Components are individual files which are used to organize your user interface code.</strong>
                       Each component lives in a .vugu file.  Each .vugu file is processed to produce 
@@ -170,6 +169,8 @@
                       of the <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#Builder">Builder</a>
                       interface and simply provide a <code>Build</code> method with HTML nodes they output.
                     </p>
+
+                    <h2>Static Component References</h2>
 
                     <p>
                       One component can include a <strong>tag that indicates the name of
@@ -358,7 +359,7 @@ nobody { color: #272822; background-color: #fafafa; }
 </div>
 
                       <p>In this case the <code>&lt;main:MyLine&gt;</code> tag gets replaced with the <code>&lt;li&gt;</code> tag and its contents as 
-                        rendered by the MyLine component.
+                        rendered by the MyLine component.  The reference is emitted directly into the code generated file and resolved at Go compile time.
                       </p>
 
                       <p><code>main</code> is the name of the package.  The name of the current package (&#34;main&#34; or otherwise) is removed
@@ -575,6 +576,11 @@ nobody { color: #272822; background-color: #fafafa; }
                           <code>stringAttrMapValue</code> but is evaluated as Go code instead of a static string.</li>
                       </ul>
 
+                      <p>The <code>vg-key</code> attribute can also be specified on a component reference to indicate an additional value which 
+                      should be used for caching purposes.  Generally this is a key used in a loop iterator.  Note that loops will automatically 
+                      select the key from the <nobr><code>vg-for</code>,</nobr> but you can override what is used for caching purposes by specifying 
+                      <nobr><code>vg-key</code></nobr> on your component reference.</p>
+
                       <!-- <div class="alert alert-warning" role="alert">
                         <i class="icon-alert-circle"></i>
                         <h4 class="fs-22">Please Note</h4>
@@ -614,6 +620,146 @@ nobody { color: #272822; background-color: #fafafa; }
                           behavior in main_wasm.go, in case you need more control over what components are available
                           under what names.</p>
                       </div> -->
+
+                      <h2>Dynamic Component References</h2>
+
+                      <p>Component references can also be done dynamically based on an arbitrary Go expression.  This is done with 
+                        a <code>&lt;vg-comp expr=&#34;&#34;&gt;&lt;vg-comp&gt;</code> tag, and the expression must 
+                        resolve to a type compatible with <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#Builder">vugu.Builder</a>.
+                        This allows you to instantiate a component in your own Go code and reference it directly during render.  Example:
+                      </p>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="c">&lt;!-- root.vugu --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">vg-comp</span> <span class="na">expr</span><span class="o">=</span><span class="s">&#34;c.MyChildComp&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">vg-comp</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
+
+<span class="nx">type</span> <span class="nx">Root</span> <span class="nx">struct</span> <span class="p">{</span>
+    <span class="nx">MyChildComp</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">Builder</span>
+<span class="p">}</span>
+
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">BeforeBuild</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">MyChildComp</span> <span class="o">==</span> <span class="nx">nil</span> <span class="p">{</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nx">MyChildComp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">someother</span><span class="p">.</span><span class="nx">ComponentHere</span><span class="p">{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre>
+
+
+</div>
+
+                      <h2>BeforeBuild()</h2>
+
+                      <p>For a component, after any field assignments are done and before the actual virtual DOM building occurs, the 
+                        <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#BeforeBuilder">BeforeBuild()</a> method is called on a component if it exists.</p>
+
+                      <p>This is for use in implementing &#34;computed fields&#34; (to use Vue&#39;s terminology), and doing any precomputation prior to building.</p>
+
+                      <h2 id="modification-tracking">Modification Tracking</h2>
+
+                      <p>Modification tracking is done with <code>ModTracker</code>, it is used internally, you won&#39;t need to instantiate it yourself.</p>
+                      
+                      <p>ModTracker determines &#34;changed&#34; from one render pass to the next based on these rules:</p>
+                      
+                      <ul>
+                      <li><strong>Component (and other structs) fields are traversed by calling <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ModCheckAll">ModCheckAll</a> on each with the struct tag <code>`vugu:&#34;data&#34;`</code>.</strong>  Any struct fields used as component input should be tagged as such, or you must implement the 
+                        <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ModChecker">ModChecker</a>
+                        interface.  &#34;Computed fields&#34;, populated during <code>BeforeBuild()</code> should generally not be tagged like this.</li>
+                      <li><strong>Then modification checking continues to traverse based on these rules:</strong></li>
+                      <li><strong>For values implementing the <code>ModChecker</code> interface,</strong> the <code>ModCheck</code> method will be called.</li>
+                      <li><strong>All values passed should be pointers</strong> to the types described below.</li>
+                      <li><strong>Single-value primitive types</strong> are supported.  </li>
+                      <li><strong>Arrays and slices of supported types are supported,</strong> their length is compared as well as a pointer to each member.</li>
+                      <li><strong>As a special case, []byte is treated like a string.</strong></li>
+                      <li><strong>Maps are not supported</strong> at this time.</li>
+                      <li><strong>Other weird and wonderful things like channels and funcs are not supported.</strong></li>
+                      <li><strong>Passing an unsupported type will result in a panic.</strong></li>
+                      </ul>
+
+                      <p>
+                      The point of all this is that <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ModTracker">ModTracker</a> will scan your component and follow the graph of objects to determine if it is &#34;modified&#34; before re-rendering.  The 
+                      <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ModChecker">ModChecker</a> interface (and if you&#39;re looking at that, have a look at <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ModCounter">ModCounter</a> as a simple implementation) allows developers to customize how modification tracking is done, for when the graph of objects gets too large and things get slow.
+                      </p>
+
+
 </div>
                         </article>
                         <aside class="col-md-4 content-aside bg-light">
