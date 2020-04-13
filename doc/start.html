@@ -30,6 +30,7 @@
  <!-- MS Edge polyfill -->
 <!-- <script src="/wasm_exec.js"></script> -->
 
+
 <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
@@ -133,36 +134,123 @@
 
 
                     <p>
-                      Let&#39;s make a basic working Vugu application that runs in your browser.  It 
-                      only takes three small files to start.  Make sure you have at least 
+                      Let&#39;s make a basic working Vugu application that runs in your browser.
+                      A few commands will get you started and a minimal Vugu application 
+                      is quite small.
+                      Make sure you have at least 
                       <strong><a target="_blank" href="https://golang.org/dl/">Go</a> 1.14</strong> installed.
                     </p>
+
+                    <div class="alert alert-warning" role="alert">
+                      <i class="icon-alert-circle"></i>
+                      <h4 class="fs-22">Note</h4>
+                      <p>
+                        The tools you install below are not required for Vugu programs run or compile.
+                        Vugu programs <em>are just Go programs</em>.  Code generation is done via 
+                        <a target="_blank" href="https://blog.golang.org/generate">go generate</a>
+                        which runs a command called <code>vugugen</code>.  The <code>vgrun</code> tool is a simple 
+                        wrapper around <code>go generate; go build; go run</code> that provides nice features like file watching
+                        and automatic generate, build and page refresh upon edit.  You are not required to use these tools 
+                        and Vugu programs do and will continue to operate as plain old Go programs.
+                        That said, the example shown below uses these tools to make things easy to rapidly get started.
+                      </p>
+                    </div>
+              
+
 
                   <section id="section-1">
                     <!-- <h2 class="section-title-2">Quick Start <a data-scroll href="#section-2" class="anchor" data-toggle="tooltip" data-placement="top" title="Copy URL"><i class="icon-hash"></i></a></h2> -->
                     <ol class="step-list">
+
                       <li><div>
                         <p>
-                          <strong>Create a new empty folder anywhere you like.</strong>  We&#39;ll use the name <code>testapp</code> as an example. 
-                          Each file you create will be directly in this folder, no subfolders are needed.
-                        </p>
-                      </div></li>
-                      <li><div>
-                        <p><strong>Create</strong> <code>go.mod</code> which specifies a 
-                          <a target="_blank" href="https://github.com/golang/go/wiki/Modules#gomod">Go module</a> name.  To get started, you can 
-                          pick any name you like as a placeholder following the pattern shown. 
-                          For example:</p>
-                          
-                        <p>
-                          </p><pre><code>module example.org/someone/testapp
-</code></pre>
+                          <strong>Install vgrun and related utilities</strong> with the commands:
+</p><div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma">go install github.com/vugu/vgrun
+vgrun -install-tools</pre>
+
+
+</div>                            
                         <p></p>
                       </div></li>
+
                       <li><div>
                         <p>
-                          <strong>Create a Vugu component file.</strong>
-                          We&#39;ll put a click handler and an element that toggles to demonstrate some basic functionality.
-                          This first component should be called <code>root.vugu</code>:
+                          <strong>Create a new empty folder anywhere you like.</strong>  From that directory, tell vgrun to make 
+                          you a sample application:
                           </p><div>
 <style type="text/css">
 /* Background */ .chroma { color: #272822; background-color: #fafafa }
@@ -237,30 +325,353 @@
 /* GenericStrong */ .chroma .gs { font-weight: bold }
 nobody { color: #272822; background-color: #fafafa; }
 </style>
-<pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;my-first-vugu-comp&#34;</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">button</span> <span class="err">@</span><span class="na">click</span><span class="o">=</span><span class="s">&#34;c.Toggle()&#34;</span><span class="p">&gt;</span>Test<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">vg-if</span><span class="o">=</span><span class="s">&#34;c.Show&#34;</span><span class="p">&gt;</span>I am here!<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<pre class="chroma">vgrun -new-from-example=simple .</pre>
+
+
+</div> 
+                        <p></p>
+                      </div></li>
+
+                      <li><div>
+                        <p>
+                          <strong>Now run the development server</strong> with vgrun:
+</p><div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma">vgrun devserver.go</pre>
+
+
+</div> 
+                        <p></p>
+                      </div></li>
+
+                      <li><div>
+                        <p><strong>Browse to it</strong>: <a target="_blank" href="http://127.0.0.1:8844/">http://127.0.0.1:8844/</a>
+                          and marvel at the wonder you have created.  Now let&#39;s take a quick look at the files 
+                          it created.
+                      </p></div></li>
+
+                      <li><div>
+                        <p><strong>Aside from familiar files</strong> like <code>.gitignore</code> and <code>README.md</code>
+                          and <code>go.mod</code>,
+                          there is a <code>generate.go</code> file which just has the appropriate Go generate comment in it to
+                          invokve the Vugu code generator:
+                          </p><div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma">//go:generate vugugen -s</pre>
+
+
+</div> 
+                          (The <code>-s</code> flag tells it to put the generated code in a single file.  <code>-r</code>
+                          is available too for recursive operation.)
+                      </div></li>
+
+                      <li><div>
+                        <p>
+                          <strong>The file <code>root.vugu</code></strong>  Contains a simple Vugu component that demonstrates
+                          how HTML elements and Go code are combined together.  It looks like so (abbreviated for clarity):
+                        </p>
+
+                      <div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">main</span> <span class="na">role</span><span class="o">=</span><span class="s">&#34;main&#34;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;container text-center&#34;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;mt-5&#34;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Welcome to Vugu<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;lead&#34;</span><span class="p">&gt;</span>This page is being rendered via 
+        <span class="p">&lt;</span><span class="nt">a</span> <span class="err">@</span><span class="na">click</span><span class="o">=</span><span class="s">&#39;event.PreventDefault();c.ShowWasm=!c.ShowWasm&#39;</span> 
+           <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://webassembly.org/&#34;</span><span class="p">&gt;</span>WebAssembly<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>...
+      <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">vg-if</span><span class="o">=</span><span class="s">&#39;c.ShowWasm&#39;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;alert 
+</span><span class="s">           alert-primary&#34;</span> <span class="na">role</span><span class="o">=</span><span class="s">&#34;alert&#34;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>WebAssembly<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> (abbreviated Wasm) is a 
+        binary instruction format...
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">main</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
 
-<span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
-<span class="p">.</span><span class="nc">my-first-vugu-comp</span> <span class="p">{</span> <span class="k">background</span><span class="p">:</span> <span class="mh">#eee</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
-
 <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
-<span class="nx">type</span> <span class="nx">Root</span> <span class="nx">struct</span> <span class="p">{</span> <span class="nx">Show</span> <span class="nx">bool</span> <span class="sb">`vugu:&#34;data&#34;`</span> <span class="p">}</span>
-<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">Toggle</span><span class="p">()</span> <span class="p">{</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Show</span> <span class="o">=</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">Show</span> <span class="p">}</span>
+<span class="nx">type</span> <span class="nx">Root</span> <span class="nx">struct</span> <span class="p">{</span>
+    <span class="nx">ShowWasm</span> <span class="nx">bool</span> <span class="sb">`vugu:&#34;data&#34;`</span>
+<span class="p">}</span>
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></pre>
 
 
-</div>
+</div> 
+                      </div></li>
 
-                        <p></p>
+
+                      <!--
+                      <li><div>
+                        <p>
+                          <strong>Create a new empty folder anywhere you like.</strong>  We'll use the name <code>testapp</code> as an example. 
+                          Each file you create will be directly in this folder, no subfolders are needed.
+                        </p>
+                      </div></li>
+
+                      <li><div>
+                        <p><strong>Create</strong> <code>go.mod</code> which specifies a 
+                          <a target="_blank" href="https://github.com/golang/go/wiki/Modules#gomod">Go module</a> name.  To get started, you can 
+                          pick any name you like as a placeholder following the pattern shown. 
+                          For example:</p>
+                          
+                        <p>
+                          <pre><code>module example.org/someone/testapp
+</code></pre>
+                        </p>
                       </div></li>
                       <li><div>
-                        <p><strong>Create a development server file.</strong>  Note that this does not get compiled to WebAssembly.
-                          This is a server which serves your program up to the browser.
-                          <code>devserver.go</code>:
-                        </p><p></p><div>
+                        <p>
+                          <strong>Create a Vugu component file.</strong>
+                          We'll put a click handler and an element that toggles to demonstrate some basic functionality.
+                          This first component should be called <code>root.vugu</code>:
+                          <div vg-html='codefmt.Show("html",`<div class="my-first-vugu-comp">
+    <button @click="c.Toggle()">Test</button>
+    <div vg-if="c.Show">I am here!</div>
+</div>
+
+<style>
+.my-first-vugu-comp { background: #eee; }
+</style>
+
+<script type="application/x-go">
+type Root struct { Show bool `+"`"+`vugu:"data"`+"`"+` }
+func (c *Root) Toggle() { c.Show = !c.Show }
+</script>`)'></div>
+
+                        </p>
+                      </div></li>
+                      <li><div>
+
+                        -->
+                        <li><div>
+                          <p><strong>The file <code>devserver.go</code></strong> is a simple development
+                          web server. Note that this does not get compiled to WebAssembly.
+                          This is a server which serves your program up to the browser.  It starts an 
+                          http server, a wasm compiler tool (a thin wrapper around <code>GOOS=js GOARCH=wasm go build</code>)
+                          and hooks up a default index page, the necessary JS support file and includes Bootstrap. (Which is just an example,
+                          Vugu has no dependency on bootstrap or any other CSS/JS framework.)
+                          These pieces are easily customizable, see the 
+                          <a target="_blank" href="https://godoc.org/github.com/vugu/vugu/devutil">docs</a>.
+                          <!-- <code>devserver.go</code>: --></p>
+
+                        <div>
 <style type="text/css">
 /* Background */ .chroma { color: #272822; background-color: #fafafa }
 /* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
@@ -341,28 +752,36 @@ nobody { color: #272822; background-color: #fafafa; }
 <span class="kn">import</span> <span class="p">(</span>
 	<span class="s">&#34;log&#34;</span>
 	<span class="s">&#34;net/http&#34;</span>
-	<span class="s">&#34;os&#34;</span>
 
-	<span class="s">&#34;github.com/vugu/vugu/simplehttp&#34;</span>
+	<span class="s">&#34;github.com/vugu/vugu/devutil&#34;</span>
 <span class="p">)</span>
 
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">wd</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getwd</span><span class="p">()</span>
 	<span class="nx">l</span> <span class="o">:=</span> <span class="s">&#34;127.0.0.1:8844&#34;</span>
 	<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Starting HTTP Server at %q&#34;</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span>
-	<span class="nx">h</span> <span class="o">:=</span> <span class="nx">simplehttp</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">wd</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
-	<span class="c1">// include a CSS file
-</span><span class="c1"></span>	<span class="c1">// simplehttp.DefaultStaticData[&#34;CSSFiles&#34;] = []string{ &#34;/my/file.css&#34; }
-</span><span class="c1"></span>	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="nx">l</span><span class="p">,</span> <span class="nx">h</span><span class="p">))</span>
+
+	<span class="nx">wc</span> <span class="o">:=</span> <span class="nx">devutil</span><span class="p">.</span><span class="nf">NewWasmCompiler</span><span class="p">().</span><span class="nf">SetDir</span><span class="p">(</span><span class="s">&#34;.&#34;</span><span class="p">)</span>
+	<span class="nx">mux</span> <span class="o">:=</span> <span class="nx">devutil</span><span class="p">.</span><span class="nf">NewMux</span><span class="p">()</span>
+	<span class="nx">mux</span><span class="p">.</span><span class="nf">Match</span><span class="p">(</span><span class="nx">devutil</span><span class="p">.</span><span class="nx">NoFileExt</span><span class="p">,</span> <span class="nx">devutil</span><span class="p">.</span><span class="nx">DefaultAutoReloadIndex</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span>
+		<span class="s">`&lt;!-- styles --&gt;`</span><span class="p">,</span>
+		<span class="s">`&lt;link rel=&#34;stylesheet&#34; href=&#34;https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css&#34;&gt;`</span><span class="p">))</span>
+	<span class="nx">mux</span><span class="p">.</span><span class="nf">Exact</span><span class="p">(</span><span class="s">&#34;/main.wasm&#34;</span><span class="p">,</span> <span class="nx">devutil</span><span class="p">.</span><span class="nf">NewMainWasmHandler</span><span class="p">(</span><span class="nx">wc</span><span class="p">))</span>
+	<span class="nx">mux</span><span class="p">.</span><span class="nf">Exact</span><span class="p">(</span><span class="s">&#34;/wasm_exec.js&#34;</span><span class="p">,</span> <span class="nx">devutil</span><span class="p">.</span><span class="nf">NewWasmExecJSHandler</span><span class="p">(</span><span class="nx">wc</span><span class="p">))</span>
+	<span class="nx">mux</span><span class="p">.</span><span class="nf">Default</span><span class="p">(</span><span class="nx">devutil</span><span class="p">.</span><span class="nf">NewFileServer</span><span class="p">().</span><span class="nf">SetDir</span><span class="p">(</span><span class="s">&#34;.&#34;</span><span class="p">))</span>
+
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="nx">l</span><span class="p">,</span> <span class="nx">mux</span><span class="p">))</span>
 <span class="p">}</span>
+
 </pre>
 
 
 </div>
 <!-- </code></pre> -->
-                        <p></p>
+                        
                       </div></li>
-                      <li><div>
+
+                      <!-- <li><div> -->
+                        <!--
                         <p><strong>Run the server</strong>.
                           While in the same directory, run the command <code>go run devserver.go</code></p>
                         <p>After a few brief moments, the server should start.  It works the same on 
@@ -370,10 +789,11 @@ nobody { color: #272822; background-color: #fafafa; }
                       </div></li>
                       <li><div>
                           <p><strong>Browse to it</strong>: <a target="_blank" href="http://127.0.0.1:8844/">http://127.0.0.1:8844/</a>
-                        </p></div></li>
+                        </div></li>
                       <li><div>
                           <p>Marvel at the wonder you have created.
-                        </p></div></li>
+                        </div></li>
+                        -->
   
                     </ol>
                   </section>
