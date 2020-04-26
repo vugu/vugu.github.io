@@ -138,7 +138,7 @@
                       additional .go files to it and use them as part of your component.
                       Vugu does some 
                       code generation, but otherwise does not interfere with the regular Go build 
-                      process at all.  By default, code generated files end with <em>_vgen.go</em>.
+                      process at all.  Code-generated files end with <em>_vgen.go</em>.
                     </p>
 
                     <!-- <p>
@@ -347,7 +347,7 @@ nobody { color: #272822; background-color: #fafafa; }
 <pre class="chroma"><span class="c">&lt;!-- my-line.vugu --&gt;</span>
 
 <span class="p">&lt;</span><span class="nt">li</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;my-line&#34;</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">strong</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;c.FileName&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>:<span class="p">&lt;</span><span class="nt">span</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;c.LineNumber&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">strong</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#39;c.FileName&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>:<span class="p">&lt;</span><span class="nt">span</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#39;c.LineNumber&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
 
 <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
@@ -555,6 +555,7 @@ nobody { color: #272822; background-color: #fafafa; }
     <span class="na">:DynamicField</span><span class="o">=</span><span class="s">&#39;/* some go expression */ 123.0&#39;</span>
     <span class="na">stringAttrMapValue</span><span class="o">=</span><span class="s">&#34;some string&#34;</span>
     <span class="na">:dynamicAttrMapValue</span><span class="o">=</span><span class="s">&#39;/* some go expression */ 123.0&#39;</span>
+    <span class="err">@</span><span class="na">Something</span><span class="o">=</span><span class="s">&#39;/* ... */&#39;</span>
     <span class="p">&gt;&lt;/</span><span class="nt">pkg:Comp</span><span class="p">&gt;</span>
 </pre>
 
@@ -572,16 +573,22 @@ nobody { color: #272822; background-color: #fafafa; }
                           <code>/* some go expression */ 123.0</code> is emitted directly into the 
                           code-generated file and thus evaluated as Go code.</li>
                         <li><code>stringAttrMapValue</code> (lower-case first letter) is assigned as a 
-                          key of to a field that you must declare as <code>AttrMap map[string]interface{}</code> - 
+                          key of to a field that you must declare as <code>AttrMap vugu.AttrMap</code> (an alias for <code>map[string]interface{}</code>) - 
                           this allows you to accept arbitrary values as component input, or not.</li>
                         <li><code>dynamicAttrMapValue</code> (lower-case first letter) works like 
                           <code>stringAttrMapValue</code> but is evaluated as Go code instead of a static string.</li>
+                        <li><code>@Something</code> is used for <a href="#component-events">component events, see below.</a></li>
                       </ul>
 
                       <p>The <code>vg-key</code> attribute can also be specified on a component reference to indicate an additional value which 
                       should be used for caching purposes.  Generally this is a key used in a loop iterator.  Note that loops will automatically 
                       select the key from the <nobr><code>vg-for</code>,</nobr> but you can override what is used for caching purposes by specifying 
                       <nobr><code>vg-key</code></nobr> on your component reference.</p>
+
+                      <p>The <code>vg-var</code> attribute, if specified, will cause a Go variable declaration statement to be 
+                      made with the value of the component created.  I.e. <code>&lt;pkg:Comp vg-var=&#34;a&#34; ...</code>
+                      will result in <code>var a = /* component reference */</code> in the resulting Go code.  This allows you to access the component 
+                      and its fields and methods directly as <code>a</code> when needed.</p>
 
                       <!-- <div class="alert alert-warning" role="alert">
                         <i class="icon-alert-circle"></i>
@@ -597,33 +604,450 @@ nobody { color: #272822; background-color: #fafafa; }
                           order to ease transition.
                         </p>
                       </div> -->
-              
-                      <!-- <p>  TODO: update this
-                        Vugu needs a way to determine, when re-rendering the HTML, which components are the same and which 
-                        are now different and should be re-created.  This is determined by calling 
-                        <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ComputeHash">ComputeHash</a>
-                        on the attributes (including dynamically evaluted/colon prefixed ones after evaluation) and if the hash 
-                        is different a new instance is created.  If it's the same, the same one is re-used.
-                      </p> -->
                       
                       <p>
                         Any component can include any other component. But if components include each other 
                         in a loop the behavior is undefined (but I can promise you it won&#39;t be good).
                       </p>
 
-                    <!-- <div class="alert alert-warning" role="alert">
-                        <i class="icon-alert-circle"></i>
-                        <h4 class="fs-22">Note</h4>
-                        <p>By default components register themselves in an <code>init()</code> function by calling 
-                          <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#RegisterComponentType">RegisterComponentType</a>.
-                          And by default in <code>main()</code> all registered components are retrieved and made available.
-                          So you can place <code>import _ "your/package"</code> in any file and if that package contains components 
-                          they will be available for use.  This behavior can also easily be changed by modifying the appropriate 
-                          behavior in main_wasm.go, in case you need more control over what components are available
-                          under what names.</p>
-                      </div> -->
 
-                      <h2>Dynamic Component References</h2>
+                      <h2 id="component-events">Component Events</h2>
+
+                      <p>Unlike <a href="/doc/dom-events">DOM events,</a> events for components are really just a means of receiving
+                        a simple method call.  Vugu provides some facilities to declare and use your own events quickly and easily.</p>
+
+                      <p>
+                        The <code>@</code> symbol followed by an exported Go field name (starts with an uppper case letter)
+                        is a shorthand for an assignment to this field name as follows:
+                      </p>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="p">&lt;</span><span class="nt">pkg:Comp</span> <span class="err">@</span><span class="na">Something</span><span class="o">=</span><span class="s">&#34;log.Println(event)&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">pkg:Comp</span><span class="p">&gt;</span></pre>
+
+
+</div>
+                      is shorthand for:
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="p">&lt;</span><span class="nt">pkg:Comp</span> 
+  <span class="na">:Something</span><span class="o">=</span><span class="s">&#39;func(event pkg.SomethingEvent) { log.Println(event) }&#39;</span>
+  <span class="p">&gt;&lt;/</span><span class="nt">pkg:Comp</span><span class="p">&gt;</span></pre>
+
+
+</div>
+
+                      <p>In this case <code>pkg.Comp</code> would be a struct with a field called
+                        <code>Something</code> of type <code>SomethingHandler</code>. (See more explanation below.)
+                      </p>
+
+                      <p>To faciliate creating component events, the code generation syntax 
+                        <nobr><code>//vugugen:event Something</code></nobr> exists to automatically emit the appropriate types and 
+                        interfaces if you do not declare them yourself.  Let&#39;s look at a complete example:
+                      </p>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="c">&lt;!-- root.vugu --&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;top&#34;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">main:Thing</span> 
+    <span class="err">@</span><span class="na">Click</span><span class="o">=</span><span class="s">&#39;c.ShowText = fmt.Sprintf(&#34;%#v&#34;,event)&#39;</span>
+    <span class="p">&gt;&lt;/</span><span class="nt">main:Thing</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#34;c.ShowText&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
+<span class="k">import</span> <span class="s2">&#34;fmt&#34;</span>
+<span class="nx">type</span> <span class="nx">Root</span> <span class="nx">struct</span> <span class="p">{</span> <span class="nx">ShowText</span> <span class="nx">string</span> <span class="sb">`vugu:&#34;data&#34;`</span> <span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre>
+
+
+</div>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="c">&lt;!-- thing.vugu --&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">button</span> <span class="err">@</span><span class="na">click</span><span class="o">=</span><span class="s">&#34;c.HandleButtonClick(event)&#34;</span><span class="p">&gt;</span>A button here<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
+
+<span class="nx">type</span> <span class="nx">Thing</span> <span class="nx">struct</span> <span class="p">{</span>
+    <span class="nx">Click</span> <span class="nx">ClickHandler</span>
+<span class="p">}</span>
+
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Thing</span><span class="p">)</span> <span class="nx">HandleButtonClick</span><span class="p">(</span><span class="nx">event</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">DOMEvent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Click</span> <span class="o">!=</span> <span class="nx">nil</span> <span class="p">{</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nx">Click</span><span class="p">.</span><span class="nx">ClickHandle</span><span class="p">(</span><span class="nx">ClickEvent</span><span class="p">{</span><span class="nx">DOMEvent</span><span class="o">:</span><span class="nx">event</span><span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// ClickEvent we are declaring ourselves so we can add whatever fields we want.
+</span><span class="c1">// If we had not declared it here, the comment below would cause this to have
+</span><span class="c1">// be created automatically.
+</span><span class="c1"></span><span class="nx">type</span> <span class="nx">ClickEvent</span> <span class="nx">struct</span> <span class="p">{</span>
+    <span class="nx">vugu</span><span class="p">.</span><span class="nx">DOMEvent</span>
+<span class="p">}</span>
+
+<span class="c1">//vugugen:event Click
+</span><span class="c1"></span>
+<span class="c1">// The above statement will code generate the following for any of
+</span><span class="c1">// these that you do not declare yourself:
+</span><span class="c1"></span>
+<span class="c1">// ClickHandler is the interface for things that can handle ClickEvent.
+</span><span class="c1">// type ClickHandler interface {
+</span><span class="c1">// 	 ClickHandle(event ClickEvent)
+</span><span class="c1">// }
+</span><span class="c1"></span>
+<span class="c1">// ClickFunc implements ClickHandler as a function.
+</span><span class="c1">// type ClickFunc func(event ClickEvent)
+</span><span class="c1"></span>
+<span class="c1">// ClickHandle implements the ClickHandler interface.
+</span><span class="c1">// func (f ClickFunc) ClickHandle(event ClickEvent) { f(event) }
+</span><span class="c1"></span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre>
+
+
+</div>
+
+                      <p>
+                        In this case our <code>Thing</code> has a field called Click which is of type 
+                        <code>ClickHandler</code>. Each of the related types: 
+                        <code>ClickEvent,</code> <code>ClickHandler,</code>
+                        <code>ClickFunc</code> will be generated automatically by the vugugen comment if they don&#39;t 
+                        exist.  This field can then be easily assigned with
+                        <code>&lt;main:Thing @Click=&#39;...&#39;&gt;</code> as shown.
+                      </p>
+
+                      <div class="alert alert-warning" role="alert">
+                        <i class="icon-alert-circle"></i>
+                        <h4 class="fs-22">Tip: Component Event Naming</h4>
+                        <p>The suggested approach for naming events is to use the name of the action in the present tense.
+                          i.e. &#39;Save&#39; rather than &#39;Saved&#39; or another variation.</p>
+                        <p>
+                            If the component event name corresponds directly to a DOM event, use the camel case version, i.e. 
+                            DOM event &#34;click&#34; becomes ClickEvent defined with DOMEvent embedded into it
+                            <code>type ClickEvent struct { vugu.DOMEvent }</code>. (The code generator for <code>//vugugen:event Click</code>
+                            will do this for you if you do not otherwise declare <code>ClickEvent</code>.)
+                            This makes less hassle when writing code that involves similar DOM and components events
+                            and they can be used in similar ways. For example 
+                            <nobr><code>&lt;pkg:Comp @Click=&#39;event.PreventDefault()&#39;&gt;</code>,</nobr> following this convention,
+                            would have the same and expected behavior as <nobr><code>&lt;button @click=&#39;event.PreventDefault()&#39;&gt;</code></nobr>
+                        </p>
+                        <p>
+                          Also, your event types may be declared as either structs or interfaces.  Use whichever is most appropriate for your 
+                          situation. For simple one-off events structs are probably more appropriate.  For complex events 
+                          that have deep and meaningful implications throughout a large app, and interface might be better.
+                        </p>
+                      </div>
+
+                      <p>
+                        Again, this system of naming is intended to make it simple to create custom events for your components 
+                        that are both type-safe and easy to use.  If you need to do something more sophisticated you can use 
+                        the <code>:Something=</code> syntax to assign an arbitrary Go expression to a field and this works 
+                        perfectly well for component events as well.  Remember, components events are just regular struct 
+                        field assignements, with some tooling to make them easier to use with the @ syntax.
+                      </p>
+  
+                      <!-- What about the fact that vugu.DOMEvent is passed around by ptr but component events not - we want
+                      the ability to use an interface Aha! DOMEvent should be an interface instead of a struct with
+                      hidden fields, that's exactly the thing.  Can be implemented with an unexported domEvent struct. -->
+                  
+
+                      <h2 id="vg-comp">Dynamic Component References</h2>
 
                       <p>Component references can also be done dynamically based on an arbitrary Go expression.  This is done with 
                         a <code>&lt;vg-comp expr=&#34;&#34;&gt;&lt;vg-comp&gt;</code> tag, and the expression must 
@@ -728,6 +1152,251 @@ nobody { color: #272822; background-color: #fafafa; }
 
 </div>
 
+                      <h2 id="slots">Slots</h2>
+
+                      <p>Slots are a mechanism that allow you to pass content (or logic that generates content) into another 
+                        component, so it can output it in the appropriate place.  Slots are implemented by emitting 
+                        a Go anonymous function which outputs the markup you specify, converts it to a 
+                        <a href="https://godoc.org/github.com/vugu/vugu#Builder" target="_blank">vugu.Builder</a>, 
+                        and assigns it to a field on a component struct.  Example:
+                      </p>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="c">&lt;!-- root.vugu --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="c">&lt;!-- content placed directly inside a component is &#34;DefaultSlot&#34;--&gt;</span>
+    <span class="p">&lt;</span><span class="nt">main:MySlottedComp</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>This goes in the DefaultSlot<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">main:MySlottedComp</span><span class="p">&gt;</span>
+
+    <span class="c">&lt;!-- or we can specify mutliple slots with names--&gt;</span>
+    <span class="p">&lt;</span><span class="nt">main:MySlottedComp</span> <span class="na">vg-var</span><span class="o">=</span><span class="s">&#39;myParentComp&#39;</span><span class="p">&gt;</span>
+
+      <span class="p">&lt;</span><span class="nt">vg-slot</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;DefaultSlot&#34;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>This goes in the DefaultSlot<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">vg-slot</span><span class="p">&gt;</span>
+
+      <span class="p">&lt;</span><span class="nt">vg-slot</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;AfterSlot&#34;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>This goes in the AfterSlot: 
+          <span class="p">&lt;</span><span class="nt">span</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#39;fmt.Sprintf(myParentComp)&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">vg-slot</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;/</span><span class="nt">main:MySlottedComp</span><span class="p">&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre>
+
+
+</div>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="c">&lt;!-- my-slotted-comp.vugu --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="c">&lt;!-- will render DefaultSlot here if not-nil--&gt;</span>
+    <span class="p">&lt;</span><span class="nt">vg-comp</span> <span class="na">expr</span><span class="o">=</span><span class="s">&#39;c.DefaultSlot&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">vg-comp</span><span class="p">&gt;</span>
+
+    <span class="c">&lt;!-- will render AfterSlot here if not-nil--&gt;</span>
+    <span class="p">&lt;</span><span class="nt">vg-comp</span> <span class="na">expr</span><span class="o">=</span><span class="s">&#39;c.AfterSlot&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">vg-comp</span><span class="p">&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
+
+<span class="nx">type</span> <span class="nx">MySlottedComp</span> <span class="nx">struct</span> <span class="p">{</span>
+    <span class="nx">DefaultSlot</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">Builder</span>
+    <span class="nx">AfterSlot</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">Builder</span>
+<span class="p">}</span>    
+
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre>
+
+
+</div>
+
+                      <p>As you can see above, content directly inside a component tag is assigned to the &#34;DefaultSlot&#34;. 
+                        Or the <code>&lt;vg-slot&gt;</code> tag can be used to assign to an explicitly named slot.
+                        Inside in the implementation of the slotted component, <code>&lt;vg-comp&gt;</code>
+                        is used to output the slot content (see above for more info on vg-comp).  You can also see 
+                        in the example that slots can access the component they are &#34;inside&#34; via a variable name 
+                        declared with <code>vg-var</code>.
+                      </p>
+
+                      <p>Dynamic slot names are also available using the syntax <code>Field[IndexExpr]</code> as the 
+                      slot name.  In this case, <code>Field</code> must be of type <code>map[string]vugu.Builder</code>
+                      and <code>IndexExpr</code> must be a valid expression to be used for assignment into the map.</p>
+
+                      <p><small>TODO: Once a &#34;data table&#34; component is created this will provide a good example for 
+                        how dynamic slots are handled and this documentation should be updated accordingly.
+                        But the core idea is that slots are just functions, and since they can access the parent 
+                        component from the scope they are declared in (via the vg-var attr), 
+                        a data table can for example have a field 
+                        like <code>CurrentIndex int</code> and a slot that handles an individual row can read 
+                        that field upon each iteration to determine which record it&#39;s supposed to output.
+                        This is in contrast to how Vue deals with &#34;scoped slots&#34;. 
+                        In Vugu, you don&#39;t &#34;pass&#34; things into slots,
+                        instead they just read from the scope they are declared in.  This sounds strange 
+                        initially but it allows the various references to be type-safe and avoids passing 
+                        around interface{}s with type assertions.  Slots can understand the context in which 
+                        they are called and the input data, the component that has the slot itself should 
+                        understand as little about its input as possible.  A similar approach is used
+                        for things like sort.Slice in the Go standard library - where the caller understands
+                        what it is sorting, and the code in the sort package knows only how to sort.
+                        It works well there. Likewise, components with slots only know where and in what sequence
+                        they output slot content, not all the details about what data they are dealing with.
+                        (This even applies if there is a bunch of crazy reflection code to provide nice 
+                        pretty output by default by inspecting, e.g. a slice that is passed to a data table -
+                        it still doesn&#39;t change the basic idea.)
+                        This whole concept should be explained clearly and in detail with examples 
+                        once some more experience is gained.</small>
+                      </p>
+
                       <h2>BeforeBuild()</h2>
 
                       <p>For a component, after any field assignments are done and before the actual virtual DOM building occurs, the 
@@ -760,6 +1429,26 @@ nobody { color: #272822; background-color: #fafafa; }
                       The point of all this is that <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ModTracker">ModTracker</a> will scan your component and follow the graph of objects to determine if it is &#34;modified&#34; before re-rendering.  The 
                       <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ModChecker">ModChecker</a> interface (and if you&#39;re looking at that, have a look at <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ModCounter">ModCounter</a> as a simple implementation) allows developers to customize how modification tracking is done, for when the graph of objects gets too large and things get slow.
                       </p>
+
+                      <!--
+                        TODO: THE PHILOSOPHY OF WRITING COMPONENTS
+                        - Vugu is just here to let you write HTML and handle logic in Go
+                        - Do not wrap HTML with a component if it does not add functionality
+                        - If you can accomplish what you are doing with CSS, use CSS
+                        - Components frameworks love to define a wrapper for everthing,
+                          we this is a bad idea.
+                        - At first glance it may *seem* inconsistent to mix HTML and 
+                          components, but it is also (assuming you know Vugu markup syntax)
+                          obvoius what is happening.  We don't have a wrapper for <button>
+                          because it adds no value, it would just be one more thing you 
+                          have to look up the docs on to use.
+                        - Some would argue that wrapping everything with components
+                          makes things more "consistent".  Given the choice between
+                          being consistent and complex, and less consistent and simpler,
+                          we're choosing the simpler option.  You'll get used to 
+                          seeing <button> and <vgform:Select> next to each other,
+                          and once you're over that, you'll (hopefully) thank me.
+                      -->
 
 
 </div>
@@ -794,6 +1483,15 @@ nobody { color: #272822; background-color: #fafafa; }
         </a><a class="list-group-item list-group-item-action d-flex align-items-center active" href="/doc/components">
             <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
             <span>Using Components</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/forms">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Forms</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/wiring">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Wiring</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/routing">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Routing (URLs)</span>
         </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/program">
             <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
             <span>Program Structure</span>
@@ -837,7 +1535,7 @@ nobody { color: #272822; background-color: #fafafa; }
             </div>
             <div class="col-12 col-md-6 text-right">
                 <h4 class="prev-next-part">
-                    <a href="/doc/program">Vugu Program Structure »</a>
+                    <a href="/doc/forms">Vugu Forms »</a>
                 </h4>
             </div>
         </div>

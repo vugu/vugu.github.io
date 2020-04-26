@@ -336,7 +336,7 @@ nobody { color: #272822; background-color: #fafafa; }
 </style>
 <pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-for</span><span class="o">=</span><span class="s">&#39;i := 0; i &lt; 10; i++&#39;</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#34;i&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#34;i&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
     <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></pre>
 
@@ -419,7 +419,7 @@ nobody { color: #272822; background-color: #fafafa; }
 </style>
 <pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-for</span><span class="o">=</span><span class="s">&#39;_, item := range c.Items&#39;</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#34;item&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#34;item&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
     <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
 
@@ -432,7 +432,7 @@ nobody { color: #272822; background-color: #fafafa; }
 
 </div>
 
-      <p>Note that the vg-html attribute outputs the value as HTML, using <code>fmt.Sprint()</code>, see below.</p>
+      <p>Note that the vg-content attribute outputs the value as HTML inside the element. See below.</p>
 
       <p>
         As a special case and for convenience, if the expression contains no whitespace it will be expanded to
@@ -516,8 +516,8 @@ nobody { color: #272822; background-color: #fafafa; }
 <pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">vg-for</span><span class="o">=</span><span class="s">&#39;c.Items&#39;</span><span class="p">&gt;</span>
         <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-            Key: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#34;key&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
-            Value: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#34;value&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            Key: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#34;key&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            Value: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#34;value&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
         <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
     <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
@@ -544,12 +544,24 @@ nobody { color: #272822; background-color: #fafafa; }
         This can then be overridden on individual component references as needed.
       </p>
 
-      <h3 id="vg-html">Raw HTML with <code>vg-html</code></h3>
+      <h3 id="vg-html">HTML content with <code id="vg-content">vg-content</code></h3>
 
-      <p>The vg-html attribute is used to output an expression as HTML into the contents of an element.
-        (It corresponds to the <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML">innerHTML</a> property.)
-        The expression is converted to a string using 
-        <a target="_blank" href="https://golang.org/pkg/fmt/#Sprint">fmt.Sprint()</a>.  Example:
+      <p>The vg-content attribute is used to output an expression to the contents of an element.
+        It corresponds to the <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML">innerHTML</a> property.
+        The attribute vg-html is a synonym for vg-content and has the exact same behavior.
+      </p>
+      <p>
+
+        The expression you provided is converted to a string and represented as HTML according to the rules described in 
+        <a href="https://godoc.org/github.com/vugu/vugu#VGNode.SetInnerHTML" target="_blank">SetInnerHTML</a>.
+        Generally speaking, the value will be converted to text and HTML escaped (both for security against
+        XSS attacks, and for convenience).  If you wish to override the HTML escaping and provide raw unescaped
+        HTML, you need only provide a value that implements the 
+        <a href="https://godoc.org/github.com/vugu/vugu#HTMLer" target="_blank">HTMLer</a>
+        interface.  This is easily done by casting to <code>vugu.HTML</code>.
+
+        <!-- The expression is converted to a string using  -->
+        <!-- <a target="_blank" href="https://golang.org/pkg/fmt/#Sprint">fmt.Sprint()</a>.  Example: -->
       </p>
 
 <div>
@@ -627,14 +639,11 @@ nobody { color: #272822; background-color: #fafafa; }
 nobody { color: #272822; background-color: #fafafa; }
 </style>
 <pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;&#34;&lt;b&gt;an HTML string&lt;/b&gt;&#34;&#39;</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;123&#39;</span><span class="p">&gt;</span> <span class="c">&lt;!-- will be output according to fmt.Sprint rules --&gt;</span>
-    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-html</span><span class="o">=</span><span class="s">&#39;html.EscapeString(&#34;escaping &amp; arbitrary text is easy like so&#34;)&#39;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#39;&#34;this content &lt;will be&gt; escaped&#34;&#39;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#39;vugu.HTML(&#34;this will output directly as &lt;em&gt;raw HTML&lt;/em&gt;, no escaping&#34;)&#39;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#39;123&#39;</span><span class="p">&gt;</span> <span class="c">&lt;!-- number will be output according to fmt.Sprintf %v rules --&gt;</span>
 <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-
-<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
-<span class="k">import</span> <span class="s2">&#34;html&#34;</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></pre>
+</pre>
 
 
 </div>
@@ -875,6 +884,101 @@ nobody { color: #272822; background-color: #fafafa; }
 <p><code>:=</code> is shorthand for <code>vg-attr</code>, e.g. <code>&lt;p :=&#39;vugu.VGAttributeListerFunc(c.makeAttrs)&#39;&gt;</code>
 is also valid with the same behavior.</p>
 
+      <h3 id="vg-template">Template Elements with <code>&lt;vg-template&gt;</code></h3>
+
+      <p>In some situations it is useful to attach a condition or a loop to to an element without 
+        emitting a corresponding tag into the final output.  For these cases you can use the <nobr>vg-template</nobr> tag.
+        You can put <code>vg-for</code> and <code>vg-if</code> attributes on it which have the usual 
+        meaning but only its contents, not the tag itself, are included in the final output.  Example:
+      </p>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>An item here<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Another item here<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">vg-template</span> <span class="na">vg-if</span><span class="o">=</span><span class="s">&#34;c.ShowExtra&#34;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>A conditional item here<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>And another one<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>And something else too<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">vg-template</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre>
+
+
+</div>
 
       <h3 id="property-assignment">Property Assignment with <code>.</code></h3>
 
@@ -988,7 +1092,7 @@ nobody { color: #272822; background-color: #fafafa; }
         You may use variable names declared in earlier constructs (such as <code>key</code> or <code>value</code> from a for/range loop).
         Regular Go variable scoping rules apply, where each nested DOM element is equivalent to a Go <code>{</code> code block <code>}</code>.
         The special variable <code>event</code>, of type
-        <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#DOMEvent">*vugu.DOMEvent</a>
+        <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#DOMEvent">vugu.DOMEvent</a>
         is declared in this scope and available to access the context of the event.
         See <a href="/doc/dom-events">DOM Events</a> for more info.
         Example:
@@ -1075,7 +1179,7 @@ nobody { color: #272822; background-color: #fafafa; }
 
 <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
 <span class="k">import</span> <span class="s2">&#34;log&#34;</span>
-<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">Toggle</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">vugu</span><span class="p">.</span><span class="nx">DOMEvent</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">Toggle</span><span class="p">(</span><span class="nx">e</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">DOMEvent</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">c</span><span class="p">.</span><span class="nx">Show</span> <span class="o">=</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">Show</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s2">&#34;Toggled! Show is now %t&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Show</span><span class="p">)</span>
 <span class="p">}</span>
@@ -1087,7 +1191,107 @@ nobody { color: #272822; background-color: #fafafa; }
 
 </div>
 
-      <p>You can also place statements directly in the event tag.  For example <code>@click=&#39;c.Show=!c.Show&#39;</code> is valid.</p>
+      <p>You can also place statements directly in the event attribute value.  For example <code>@click=&#39;c.Show=!c.Show&#39;</code> is valid.</p>
+
+      <h3 id="dom-element-access">DOM Element Access with <code id="vg-js-create">vg-js-create</code> and <code id="vg-js-populate">vg-js-populate</code></h3>
+
+      <p>In some situations direct access to DOM elements via <code>js.Value</code> is needed.  Two callbacks are provided for this: <code>vg-js-create</code>
+      is called when the DOM element is created but before any children are populated.  And <code>vg-js-populate</code> is called after 
+      all child elements exist.  The DOM reference is passed in a variable named <code>value</code> and can then be used to handle the 
+      DOM node directly.  Note that strictly speaking the value provided is only guaranteed to be valid until the next render pass starts.
+      Depending on various factors, subsequent renders may or may not return the same value.  Example:</p>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">canvas</span> <span class="na">width</span><span class="o">=</span><span class="s">&#34;300&#34;</span> <span class="na">height</span><span class="o">=</span><span class="s">&#34;100&#34;</span>
+    <span class="na">vg-js-populate</span><span class="o">=</span><span class="s">&#34;c.canvasPopulate(value)&#34;</span>
+    <span class="p">&gt;&lt;/</span><span class="nt">canvas</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
+<span class="nx">type</span> <span class="nx">Root</span> <span class="nx">struct</span> <span class="p">{}</span>
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">canvasPopulate</span><span class="p">(</span><span class="nx">value</span> <span class="nx">js</span><span class="p">.</span><span class="nx">Value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">drawCtx</span> <span class="o">:=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">Call</span><span class="p">(</span><span class="s2">&#34;getContext&#34;</span><span class="p">,</span> <span class="s2">&#34;2d&#34;</span><span class="p">)</span>
+    <span class="nx">drawCtx</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="s2">&#34;font&#34;</span><span class="p">,</span> <span class="s2">&#34;30px Arial&#34;</span><span class="p">)</span>
+    <span class="nx">drawCtx</span><span class="p">.</span><span class="nx">Call</span><span class="p">(</span><span class="s2">&#34;strokeText&#34;</span><span class="p">,</span> <span class="s2">&#34;Hello from Vugu!&#34;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></pre>
+
+
+</div>
 
       <h3 id="special-variable-names">Special Variable Names</h3>
 
@@ -1101,17 +1305,19 @@ nobody { color: #272822; background-color: #fafafa; }
           struct pointer.  This is the proper place to house the state of your component.
         By default the type of <code>c</code> is a named but empty struct.  However, it is common to create your own struct with 
         the data you need on it.  See more at <a href="/doc/components">Components</a></li>
-        <li><code>event</code> - This is a placeholder for a 
-          <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#DOMEvent">*vugu.DOMEvent</a> 
+        <li><code>event</code> - This is the variable name for a 
+          <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#DOMEvent">vugu.DOMEvent</a> 
           instance that is 
           created when a DOM event is triggered and your handler is called.  This also provides 
           some other needed functionality such as the 
           <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#EventEnv">EventEnv</a>, which is important for synchronizing 
           goroutines that need to update data after an event completes.  See more at 
           <a href="/doc/dom-events">DOM Events</a>.</li>
+        <li><code>value</code> is used as the variable name in vg-js-create and vg-js-populate.  See above.</li>
         <li><code>key</code> and <code>value</code> - See section covering vg-for above.  These are the 
-          default names used for implied range expressions.
-      </li></ul>
+          default names used for implied range expressions.</li>
+
+      </ul>
       
       <p>Please note that variables that your code declares, e.g. in a vg-for loop, should not start with <code>vg</code>, in order 
         to avoid conflicting with generated code.
@@ -1124,7 +1330,7 @@ nobody { color: #272822; background-color: #fafafa; }
       <ul>
         <li><strong>Attributes (with no prefix character) are just strings.</strong>  Given <code>&lt;div id=&#34;blah&#34;&gt;</code>, &#34;blah&#34; is just a string (no quotes included).</li>
         <li><strong>Attribute names preceded with a colon are Go expressions.</strong>  Given <code>&lt;div :id=&#39;&#34;bl&#34;+&#34;ah&#34;&#39;&gt;`</code>, <code>&#34;bl&#34;+&#34;ah&#34;</code> is a Go expression.</li>
-        <li><strong>Attributes beginning with <code>vg-</code> contain Go code, according to their named purpose.</strong>  E.g. <code>vg-html</code> is used for an expression that gets <code>fmt.Sprint</code>ed, <code>vg-for</code> contains the loop of a for statement, and <code>vg-if</code> contains the condition of an if statement.</li>
+        <li><strong>Attributes beginning with <code>vg-</code> contain Go code, according to their named purpose.</strong>  E.g. <code>vg-content</code> is used for an expression that converted and used as the contents of an element, <code>vg-for</code> contains the loop of a for statement, and <code>vg-if</code> contains the condition of an if statement.</li>
         <li><strong>Tags that start with <code>vg-</code> can have specialized attributes</strong> which are not prefixed (e.g. <code>&lt;vg-comp expr=&#34;....</code>)</li>
         <li><strong>Static component references contain a colon in the element name</strong> in the form of <code>pkg:Component</code>.  E.g. <code>&lt;somepkg:SomeComp&gt;</code> corresponds to a struct named <code>SomeComp</code> in a package imported as &#34;somepkg&#34;.</li>
         <li><strong>Attribute names that start with an upper case letter correspond to Go struct field names.</strong>  It seems a happy coincidence that modern HTML documents almost always do (and always can) use lower case attribute names.  This leaves attribute names that start with an upper case letter to have the meaning of corresponding to a (exported) Go struct field name.  E.g. given <code>&lt;somepkg:SomeComp :FieldA=&#34;1&#34; FieldB=&#34;blah&#34;&gt;</code>, <code>FieldA</code> and <code>FieldB</code> are struct fields on <code>SomeComp</code>, but notice the colon and so these correspond to <code>someCompInst.FieldA = 1</code> and <code>someCompInst.FieldB = &#34;blah&#34;</code></li>
@@ -1184,6 +1390,15 @@ nobody { color: #272822; background-color: #fafafa; }
         </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/components">
             <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
             <span>Using Components</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/forms">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Forms</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/wiring">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Wiring</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/routing">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Routing (URLs)</span>
         </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/program">
             <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
             <span>Program Structure</span>

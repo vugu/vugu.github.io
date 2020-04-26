@@ -240,7 +240,6 @@
 nobody { color: #272822; background-color: #fafafa; }
 </style>
 <pre class="chroma">go get -u github.com/vugu/vgrun
-go install github.com/vugu/vgrun
 vgrun -install-tools</pre>
 
 
@@ -331,6 +330,11 @@ nobody { color: #272822; background-color: #fafafa; }
 
 </div> 
                         <p></p>
+                        <p>
+                          All this does is ask git to download the 
+                          <a target="_blank" href="https://github.com/vugu-examples/simple">example project</a> 
+                          for you.
+                        </p>
                       </div></li>
 
                       <li><div>
@@ -418,6 +422,10 @@ Note that this also starts a file watcher to automatically reload the page when 
 (You can disable it and tell it to only run once with 
 <code>vgrun -1 devserver.go</code>)
                         <p></p>
+                        <p>
+                          Again, all vgrun is doing here is providing some additional convenience.
+                          You can just also just <code>go run devserver.go</code> you&#39;d like.
+                        </p>
                       </div></li>
 
                       <li><div>
@@ -835,6 +843,15 @@ nobody { color: #272822; background-color: #fafafa; }
         </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/components">
             <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
             <span>Using Components</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/forms">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Forms</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/wiring">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Wiring</span>
+        </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/routing">
+            <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
+            <span>Routing (URLs)</span>
         </a><a class="list-group-item list-group-item-action d-flex align-items-center " href="/doc/program">
             <i class="fs-20 icon-file-text2 text-primary mr-1"></i>
             <span>Program Structure</span>
