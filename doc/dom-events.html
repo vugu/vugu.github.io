@@ -455,13 +455,13 @@ nobody { color: #272822; background-color: #fafafa; }
 nobody { color: #272822; background-color: #fafafa; }
 </style>
 <pre class="chroma"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;&lt;</span><span class="nt">form</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="err">@</span><span class="na">changed</span><span class="o">=</span><span class="s">&#34;c.HandleChanged(event)&#34;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="err">@</span><span class="na">change</span><span class="o">=</span><span class="s">&#34;c.HandleChange(event)&#34;</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
         
 <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
 <span class="k">import</span> <span class="s2">&#34;log&#34;</span>
 
-<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">HandleChanged</span><span class="p">(</span><span class="nx">event</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">DOMEvent</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">HandleChange</span><span class="p">(</span><span class="nx">event</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">DOMEvent</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">PropString</span><span class="p">(</span><span class="s2">&#34;target&#34;</span><span class="p">,</span> <span class="s2">&#34;value&#34;</span><span class="p">))</span>
 <span class="p">}</span>
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></pre>
