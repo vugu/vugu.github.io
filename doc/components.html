@@ -610,6 +610,218 @@ nobody { color: #272822; background-color: #fafafa; }
                         in a loop the behavior is undefined (but I can promise you it won&#39;t be good).
                       </p>
 
+                      <h2 id="lifecycle">Component Lifecycle</h2>
+
+                      <p>
+                        At runtime, components are created and destroyed as needed, based on the logic in your application that declares what is supposed to be 
+                        displayed at a given moment.  For example, a <code>vg-if</code> expression can be used to turn a section of output on or off.  If this section
+                        includes one or more components, the necessary components are created as needed.  Other mechanisms such as <code>vg-for</code>
+                        (and in combination with the <code>vg-key</code> attribute) are used to describe more complex cases of where a component needs to exist multiple
+                        times and indicates the exact key used to identify which component is which.
+                      </p>
+
+                      <p>
+                        Regardless of the exact logic for each case, the concept is the same: Components are created when needed, remain as long as they are needed, and destroyed
+                        as soon as a render occurs where that component was not needed.
+                      </p>
+
+                      <p>
+                        The following methods can be defined on a component and will be called at the appropriate time during the build/render process:
+                      </p>
+
+                      <ul>
+                        <li><strong><code>Init(ctx <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#InitCtx">vugu.InitCtx</a>)</code></strong> 
+                          is called when a component is created before any other callbacks and gives an opportunity to <em>initialize</em>.</li>
+                        <li><strong><code>Compute(ctx <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#ComputeCtx">vugu.ComputeCtx</a>)</code></strong>
+                          is called each time before the output of a given component is built.
+                          It provides an opportunity to <em>compute</em> any necessary information for each render pass.
+                          (NOTE: this was previously called <em>BeforeBuild</em>.)</li>
+                        <li><strong><code>Rendered(ctx <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#RenderedCtx">vugu.RenderedCtx</a>)</code></strong>
+                          is called <em>after each render</em> pass has completed and all DOM elements have been synchronized with the page.</li>
+                        <li><strong><code>Destroy(ctx <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#DestroyCtx">vugu.DestroyCtx</a>)</code></strong>
+                          is called when build/render pass occurs and it is discovered that a component is no longer needed and gives an opportunity to 
+                          <em>destroy</em> any resources no longer used.</li>
+                      </ul>
+
+                      <p>
+                        For convenience, on each of these the <code>ctx</code> paramter is optional and if omitted it will be called without it.  E.g <code>Init()</code> can be used if you don&#39;t need the context.
+                        The context on each does provide an <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#EventEnv">EventEnv</a>, which is useful if you need to trigger a re-render (see next).
+                      </p>
+
+                      <p>
+                        Here&#39;s an example of a component that defines each of these lifecycle callback methods and gives an idea of their intended use:
+                      </p>
+
+<div>
+<style type="text/css">
+/* Background */ .chroma { color: #272822; background-color: #fafafa }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #e1e1e1 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #00a8c8 }
+/* KeywordConstant */ .chroma .kc { color: #00a8c8 }
+/* KeywordDeclaration */ .chroma .kd { color: #00a8c8 }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #00a8c8 }
+/* KeywordReserved */ .chroma .kr { color: #00a8c8 }
+/* KeywordType */ .chroma .kt { color: #00a8c8 }
+/* Name */ .chroma .n { color: #111111 }
+/* NameAttribute */ .chroma .na { color: #75af00 }
+/* NameBuiltin */ .chroma .nb { color: #111111 }
+/* NameBuiltinPseudo */ .chroma .bp { color: #111111 }
+/* NameClass */ .chroma .nc { color: #75af00 }
+/* NameConstant */ .chroma .no { color: #00a8c8 }
+/* NameDecorator */ .chroma .nd { color: #75af00 }
+/* NameEntity */ .chroma .ni { color: #111111 }
+/* NameException */ .chroma .ne { color: #75af00 }
+/* NameFunction */ .chroma .nf { color: #75af00 }
+/* NameFunctionMagic */ .chroma .fm { color: #111111 }
+/* NameLabel */ .chroma .nl { color: #111111 }
+/* NameNamespace */ .chroma .nn { color: #111111 }
+/* NameOther */ .chroma .nx { color: #75af00 }
+/* NameProperty */ .chroma .py { color: #111111 }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* NameVariable */ .chroma .nv { color: #111111 }
+/* NameVariableClass */ .chroma .vc { color: #111111 }
+/* NameVariableGlobal */ .chroma .vg { color: #111111 }
+/* NameVariableInstance */ .chroma .vi { color: #111111 }
+/* NameVariableMagic */ .chroma .vm { color: #111111 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #d88200 }
+/* LiteralString */ .chroma .s { color: #d88200 }
+/* LiteralStringAffix */ .chroma .sa { color: #d88200 }
+/* LiteralStringBacktick */ .chroma .sb { color: #d88200 }
+/* LiteralStringChar */ .chroma .sc { color: #d88200 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #d88200 }
+/* LiteralStringDoc */ .chroma .sd { color: #d88200 }
+/* LiteralStringDouble */ .chroma .s2 { color: #d88200 }
+/* LiteralStringEscape */ .chroma .se { color: #8045ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #d88200 }
+/* LiteralStringInterpol */ .chroma .si { color: #d88200 }
+/* LiteralStringOther */ .chroma .sx { color: #d88200 }
+/* LiteralStringRegex */ .chroma .sr { color: #d88200 }
+/* LiteralStringSingle */ .chroma .s1 { color: #d88200 }
+/* LiteralStringSymbol */ .chroma .ss { color: #d88200 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Punctuation */ .chroma .p { color: #111111 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+nobody { color: #272822; background-color: #fafafa; }
+</style>
+<pre class="chroma"><span class="c">&lt;!-- my-comp.vugu --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">ul</span> <span class="na">vg-for</span><span class="o">=</span><span class="s">&#39;_, item := range c.Items&#39;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#34;item&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Short count: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">vg-content</span><span class="o">=</span><span class="s">&#39;c.shortItemCount&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/x-go&#34;</span><span class="p">&gt;</span>
+
+<span class="k">import</span> <span class="p">(</span>
+    <span class="s2">&#34;net/http&#34;</span>
+    <span class="s2">&#34;encoding/json&#34;</span>
+<span class="p">)</span>
+
+<span class="nx">type</span> <span class="nx">MyComp</span> <span class="nx">struct</span> <span class="p">{</span>
+    <span class="nx">Loading</span> <span class="nx">bool</span> <span class="sb">`vugu:&#34;data&#34;`</span>
+    <span class="nx">Items</span> <span class="p">[]</span><span class="nx">string</span> <span class="sb">`vugu:&#34;data&#34;`</span>
+
+    <span class="nx">shortItemCount</span> <span class="kr">int</span>
+<span class="p">}</span>
+
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">MyComp</span><span class="p">)</span> <span class="nx">Init</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">InitCtx</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// kick of loading data from an endpoint
+</span><span class="c1"></span>  
+    <span class="nx">c</span><span class="p">.</span><span class="nx">Loading</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="nx">go</span> <span class="nx">func</span><span class="p">()</span> <span class="p">{</span>
+
+      <span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s2">&#34;/some/endpoint&#34;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="nx">nil</span> <span class="p">{</span>
+          <span class="nx">log</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s2">&#34;Error fetching: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+          <span class="k">return</span>
+      <span class="p">}</span>
+      <span class="nx">defer</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+      <span class="kd">var</span> <span class="nx">items</span> <span class="p">[]</span><span class="nx">string</span>
+      <span class="nx">err</span> <span class="o">=</span><span class="nx">json</span><span class="p">.</span><span class="nx">NewDecoder</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">).</span><span class="nx">Decode</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">items</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="nx">nil</span> <span class="p">{</span>
+          <span class="nx">log</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s2">&#34;Error decoding response: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+          <span class="k">return</span>
+      <span class="p">}</span>
+
+      <span class="nx">ctx</span><span class="p">.</span><span class="nx">EventEnv</span><span class="p">().</span><span class="nx">Lock</span><span class="p">()</span>
+      <span class="nx">c</span><span class="p">.</span><span class="nx">Loading</span> <span class="o">=</span> <span class="kc">false</span>
+      <span class="nx">c</span><span class="p">.</span><span class="nx">Items</span> <span class="o">=</span> <span class="nx">items</span>
+      <span class="nx">ctx</span><span class="p">.</span><span class="nx">EventEnv</span><span class="p">().</span><span class="nx">UnlockRender</span><span class="p">()</span>
+    <span class="p">}()</span>
+<span class="p">}</span>
+
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">MyComp</span><span class="p">)</span> <span class="nx">Compute</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// recompute each render
+</span><span class="c1"></span>
+    <span class="nx">count</span> <span class="o">:=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">item</span> <span class="o">:=</span> <span class="nx">range</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="nx">len</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="p">{</span>
+        <span class="nx">count</span><span class="o">++</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">c</span><span class="p">.</span><span class="nx">shortItemCount</span> <span class="o">=</span> <span class="nx">count</span>
+
+<span class="p">}</span>
+
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">MyComp</span><span class="p">)</span> <span class="nx">Rendered</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">RenderedCtx</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// if you really need to manipulate DOM directly after it is rendered, you can do it here
+</span><span class="c1"></span>
+    <span class="k">if</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">First</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// only after first render
+</span><span class="c1"></span>      <span class="nx">el</span> <span class="o">:=</span> <span class="nx">js</span><span class="p">.</span><span class="nx">Global</span><span class="p">().</span><span class="nx">Get</span><span class="p">(</span><span class="s2">&#34;document&#34;</span><span class="p">).</span><span class="nx">Call</span><span class="p">(</span><span class="s2">&#34;getElementById&#34;</span><span class="p">,</span> <span class="s2">&#34;some_id_here&#34;</span><span class="p">)</span>
+      <span class="nx">_</span> <span class="o">=</span> <span class="nx">el</span> <span class="c1">// do something with an element manually after the first render
+</span><span class="c1"></span>    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">MyComp</span><span class="p">)</span> <span class="nx">Destroy</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// some teardown code here
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+
+</pre>
+
+
+</div>
+
+                      <div class="alert alert-warning" role="alert">
+                        <i class="icon-alert-circle"></i>
+                        <h4 class="fs-22">Note: main_wasm.go change</h4>
+                        <p>
+                          With the implementation of these lifecycle events, some minor changes were made to the generated main_wasm.go file.  If you are updating an existing
+                          project from a prior Vugu version you may need to delete main_wasm.go and let it get regenerated using the latest Vugu version.
+                        </p>
+                      </div>
 
                       <h2 id="component-events">Component Events</h2>
 
@@ -1140,10 +1352,8 @@ nobody { color: #272822; background-color: #fafafa; }
     <span class="nx">MyChildComp</span> <span class="nx">vugu</span><span class="p">.</span><span class="nx">Builder</span>
 <span class="p">}</span>
 
-<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">BeforeBuild</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">MyChildComp</span> <span class="o">==</span> <span class="nx">nil</span> <span class="p">{</span>
-        <span class="nx">c</span><span class="p">.</span><span class="nx">MyChildComp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">someother</span><span class="p">.</span><span class="nx">ComponentHere</span><span class="p">{}</span>
-    <span class="p">}</span>
+<span class="nx">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Root</span><span class="p">)</span> <span class="nx">Init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">c</span><span class="p">.</span><span class="nx">MyChildComp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">someother</span><span class="p">.</span><span class="nx">ComponentHere</span><span class="p">{}</span>
 <span class="p">}</span>
 
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
@@ -1397,12 +1607,14 @@ nobody { color: #272822; background-color: #fafafa; }
                         once some more experience is gained.</small>
                       </p>
 
+                      <!--
                       <h2>BeforeBuild()</h2>
 
                       <p>For a component, after any field assignments are done and before the actual virtual DOM building occurs, the 
                         <a target="_blank" href="https://godoc.org/github.com/vugu/vugu#BeforeBuilder">BeforeBuild()</a> method is called on a component if it exists.</p>
 
-                      <p>This is for use in implementing &#34;computed fields&#34; (to use Vue&#39;s terminology), and doing any precomputation prior to building.</p>
+                      <p>This is for use in implementing "computed fields" (to use Vue's terminology), and doing any precomputation prior to building.</p>
+                      -->
 
                       <h2 id="modification-tracking">Modification Tracking</h2>
 
